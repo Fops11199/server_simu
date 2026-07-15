@@ -453,6 +453,93 @@ export const LabsTab: React.FC<LabsTabProps> = ({ setActiveTab, setActiveProvide
         }
       ],
       unlockedLabId: 'lab_5'
+    },
+    {
+      id: 'course_4',
+      title: 'Docker Containers & Microservices 101',
+      category: 'VPS Management',
+      difficulty: 'Intermediate',
+      creditsReward: 40,
+      badgeColor: 'border-blue-500/20 bg-blue-500/10 text-blue-400',
+      description: 'Understand containerization! Learn the difference between VMs and containers, how Dockerfiles compile environment images, and how to configure port mapping layers.',
+      slides: [
+        {
+          title: 'Introduction to Containerization',
+          concept: 'Containers package software and all its dependencies together, isolated from other applications, so it runs reliably on any machine.',
+          illustration: '┌──────────────────────────────────────────────┐\n│            VIRTUAL MACHINE VS DOCKER         │\n│  ┌──────────────────────┐ ┌────────────────┐ │\n│  │ [App] [App] [App]    │ │ [App] [App]    │ │\n│  │ [Guest OS] [Guest OS]│ │ [Docker Engine]│ │\n│  │     [Hypervisor]     │ │ [Host OS]      │ │\n│  └──────────────────────┘ └────────────────┘ │\n│    Heavy VMs (GBs)       Light Containers (MB)│\n└──────────────────────────────────────────────┘',
+          analogyTitle: 'Shipping Containers',
+          analogyText: 'Before shipping containers, goods were loaded onto ships loose (barrels, boxes, sacks), which took days to pack, often got lost, and got damaged. The standard shipping container allows anything (furniture, grain, cars) to be packed inside a single standard box. The ship doesn\'t care what\'s inside—it just stacks the standard boxes. Docker is that shipping container for code.',
+          keyPoints: [
+            'Containers share the host operating system\'s kernel, making them lightweight and fast to start.',
+            'They eliminate the "works on my machine" bug by locking down the exact software runtime.',
+            'A single server can host dozens of isolated containers without performance degradation.'
+          ]
+        },
+        {
+          title: 'Docker Images and Containers',
+          concept: 'A Docker Image is the static blueprint template (like a class or blueprint), while a Docker Container is the active running instance of that image.',
+          illustration: '[ Dockerfile (Recipe) ] ─── docker build ───> [ Docker Image (Cake Mix) ]\n                                                    │ docker run\n                                                    ▼\n                                            [ Running Container (Cake) ]',
+          analogyTitle: 'The Cookie Cutter',
+          analogyText: 'Think of a Dockerfile as a cookie recipe. Building the image is like buying the metal cookie cutter shaped like a star (the Image). You can have that star cutter sitting on your shelf forever—it doesn\'t do anything by itself. Running the container is like pressing that cutter into cookie dough to bake a real, physical, edible cookie (the Container). You can make 50 star cookies from that single cutter.',
+          keyPoints: [
+            'Images are built in read-only layers, cached for rapid construction and shared distribution.',
+            'A Dockerfile lists instructions sequentially (e.g., FROM, RUN, COPY, EXPOSE, CMD).',
+            'Containers add a thin read-write layer on top of the read-only image to store temporary runtime state.'
+          ]
+        },
+        {
+          title: 'Docker Network Port Mapping',
+          concept: 'Containers are isolated in private networks. To access them from the internet, you must map a public host port to the private container port.',
+          illustration: 'Incoming Request ──> Host Port 8080 ─── mapped to ───> Container Port 80 (Nginx)\n                                                                (Isolated Private Sandbox)',
+          analogyTitle: 'Apartment Buzzers',
+          analogyText: 'Imagine a secure apartment building with a single front door buzzer system. Inside, there is a room with a private intercom. To let visitors from the street (public web) reach the secret baking club in Room 5, you configure the building lobby button 8080 to map directly to Room 5\'s buzzer. When visitors press 8080 outside, it rings directly inside the baking club.',
+          keyPoints: [
+            'The "-p" flag (e.g., docker run -p 8080:80 nginx) maps a host port to a container port.',
+            'Multiple containers can run on the same private port inside, but they must map to unique host ports outside.',
+            'Exposing ports securely via firewalls prevents unauthorized database container exploits.'
+          ]
+        }
+      ],
+      glossary: [
+        { term: 'Container', definition: 'A lightweight, isolated, standalone package of software that includes everything needed to run an application.' },
+        { term: 'Docker Image', definition: 'A read-only blueprint containing the source code, libraries, and files needed to launch a container.' },
+        { term: 'Dockerfile', definition: 'A plain text document containing sequential command instructions used to automate building a Docker image.' },
+        { term: 'Port Mapping', definition: 'The practice of forwarding inbound traffic from a host network port into an isolated container network port.' },
+        { term: 'Volume', definition: 'A persistent data storage folder mounted from the host system into a container to preserve files after container reboots.' }
+      ],
+      quiz: [
+        {
+          question: 'What is the primary operational difference between a Virtual Machine (VM) and a Docker Container?',
+          options: [
+            'Virtual Machines are always faster to start up than containers.',
+            'Containers share the host operating system\'s kernel, whereas VMs package a complete guest OS.',
+            'Containers require special physical monitors to run.'
+          ],
+          correctIndex: 1,
+          explanation: 'Containers share the host operating system\'s kernel, bypassing the need for a hypervisor and a heavy guest OS, which makes them light, quick, and highly scalable.'
+        },
+        {
+          question: 'Which Dockerfile instruction is used to specify the initial base image to build upon?',
+          options: [
+            'FROM',
+            'START',
+            'DEPLOY'
+          ],
+          correctIndex: 0,
+          explanation: 'The FROM instruction initializes a new build stage and sets the Base Image for subsequent instructions.'
+        },
+        {
+          question: 'What does the command "docker run -p 8080:80 nginx" achieve?',
+          options: [
+            'It increases the Nginx speed by 8080 percent.',
+            'It runs Nginx and maps public host port 8080 to the container\'s private port 80.',
+            'It restricts Nginx access only to local developers.'
+          ],
+          correctIndex: 1,
+          explanation: 'The -p flag maps host port 8080 to container port 80, routing incoming external traffic into the containerized Nginx instance.'
+        }
+      ],
+      unlockedLabId: 'lab_6'
     }
   ];
 

@@ -7,7 +7,7 @@ import { ProviderSimulator, PathID } from './components/ProviderSimulator';
 import { LabsTab } from './components/LabsTab';
 import { 
   Server, Terminal as TermIcon, Network, Award, RotateCcw, Cpu, Database, 
-  HardDrive, Shield, HelpCircle, GraduationCap, CheckCircle, Trophy
+  HardDrive, Shield, HelpCircle, GraduationCap, CheckCircle, Trophy, Sun, Moon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -16,7 +16,17 @@ type TabID = 'dashboard' | 'terminal' | 'providers' | 'missions' | 'labs';
 const AppContent: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabID>('labs'); // Start on labs so they see the training guidelines first!
   const [activeProvider, setActiveProvider] = useState<PathID>('none');
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const saved = localStorage.getItem('hostlab_theme');
+    return (saved as 'light' | 'dark') || 'light';
+  });
   const { state, xp, missions, resetServer } = useSimulator();
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(nextTheme);
+    localStorage.setItem('hostlab_theme', nextTheme);
+  };
 
   // Active services count
   const runningServicesCount = Object.values(state.services).filter(s => s === 'running').length;
@@ -37,7 +47,7 @@ const AppContent: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#08080a] text-slate-300 flex flex-col font-sans selection:bg-cyan-500/30 selection:text-cyan-200">
+    <div className={`min-h-screen flex flex-col font-sans transition-all duration-300 ${theme === 'light' ? 'light-mode' : 'bg-[#08080a] text-slate-300'} selection:bg-cyan-500/30 selection:text-cyan-200`}>
       {/* ================= HEADER BAR ================= */}
       <header className="bg-[#0a0a0c] border-b border-white/5 px-6 py-3.5 shrink-0 shadow-lg shadow-black/30">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
@@ -111,6 +121,14 @@ const AppContent: React.FC = () => {
                 </span>
               </div>
             </div>
+
+            <button
+              onClick={toggleTheme}
+              title={theme === 'light' ? "Switch to Dark Mode" : "Switch to Light Mode"}
+              className="p-2.5 bg-[#0d0d12] hover:bg-[#15151a] hover:text-slate-100 border border-white/5 rounded text-slate-400 transition-all duration-300 cursor-pointer flex items-center justify-center shadow-md shadow-black/10"
+            >
+              {theme === 'light' ? <Moon className="w-4 h-4 text-slate-700" /> : <Sun className="w-4 h-4 text-yellow-400" />}
+            </button>
 
             <button
               onClick={() => {

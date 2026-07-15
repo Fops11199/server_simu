@@ -1,33 +1,280 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Outfit:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Inter:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Outfit:wght@100..900&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Outfit", "Inter", sans-serif;
+  --font-sans: "Source Sans 3", "Inter", "Segoe UI", sans-serif;
+  --font-display: "Source Sans 3", "Montserrat", "Outfit", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
 
-/* Custom glow animations and effects to match the Immersive UI theme */
+/* Custom glow animations and effects */
 @utility shadow-glow-cyan {
-  box-shadow: 0 0 12px rgba(34, 211, 238, 0.25);
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.2);
 }
 
 @utility shadow-glow-indigo {
-  box-shadow: 0 0 15px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
 }
 
 @utility shadow-glow-emerald {
-  box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
 }
 
 @utility shadow-glow-red {
-  box-shadow: 0 0 12px rgba(239, 68, 68, 0.25);
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.2);
 }
 
-@layer base {
-  body {
-    background-color: #08080a;
-    color: #cbd5e1;
-  }
+/* Breathing space, clean sizing and global line height */
+body {
+  font-family: "Source Sans 3", "Inter", "Segoe UI", sans-serif;
+  line-height: 1.75; /* Much more breathable line spacing like W3Schools */
+  font-size: 15px; /* Slightly larger, more comfortable base font size */
 }
 
+/* Pristine Light Mode Styles & Selective Overrides */
+.light-mode {
+  background-color: #f8fafc !important; /* Extremely clean, slate-50 light page background */
+  color: #1e293b !important; /* Charcoal dark grey for supreme contrast */
+}
+
+/* Background class mappings for Light Mode */
+.light-mode .bg-\[\#08080a\] {
+  background-color: #f8fafc !important;
+}
+
+.light-mode .bg-\[\#0a0a0c\] {
+  background-color: #ffffff !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+}
+
+.light-mode .bg-\[\#0a0a0c\]\/80 {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+  backdrop-filter: blur(12px);
+}
+
+.light-mode .bg-\[\#0d0d12\],
+.light-mode .bg-\[\#0d0d14\] {
+  background-color: #ffffff !important;
+  border-color: rgba(15, 23, 42, 0.06) !important;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 8px -1px rgba(15, 23, 42, 0.02) !important;
+}
+
+.light-mode .bg-\[\#050507\] {
+  background-color: #f1f5f9 !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+.light-mode .bg-\[\#15151a\],
+.light-mode .bg-\[\#15151a\]\/60 {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+  border-color: rgba(15, 23, 42, 0.1) !important;
+}
+
+.light-mode .bg-\[\#060608\] {
+  background-color: #f1f5f9 !important;
+  border-color: rgba(15, 23, 42, 0.06) !important;
+}
+
+.light-mode .bg-slate-900,
+.light-mode .bg-zinc-900,
+.light-mode .bg-slate-950,
+.light-mode .bg-zinc-950 {
+  /* Unless it is a terminal or code block, let's use premium white background */
+  background-color: #ffffff;
+  border-color: rgba(15, 23, 42, 0.08);
+}
+
+/* TERMINAL / INTERACTIVE CONSOLES / CODE BOX EXEMPTIONS
+   Ensure these elements remain fully dark, high-contrast, and authentic */
+.light-mode .bg-black,
+.light-mode .font-mono.bg-zinc-950,
+.light-mode .font-mono.bg-black,
+.light-mode .bg-slate-900.font-mono,
+.light-mode .bg-neutral-900.font-mono,
+.light-mode [class*="bg-[#050508]"],
+.light-mode [class*="bg-[#030304]"],
+.light-mode [class*="bg-[#08080c]"],
+.light-mode .terminal-output,
+.light-mode .terminal-output *,
+.light-mode .font-mono.bg-zinc-900,
+.light-mode .bg-zinc-950.font-mono,
+.light-mode pre,
+.light-mode code,
+.light-mode .text-green-400.font-mono {
+  background-color: #0a0e17 !important;
+  color: #38bdf8 !important; /* Sky/Cyan-400 output text */
+  border-color: rgba(6, 182, 212, 0.2) !important;
+}
+
+/* Ensure stdout logs inside light-mode consoles maintain high contrast lime/emerald colors */
+.light-mode .bg-black .text-emerald-400,
+.light-mode .bg-zinc-950 .text-emerald-400,
+.light-mode .bg-black .text-green-400,
+.light-mode .bg-zinc-950 .text-green-400,
+.light-mode pre .text-emerald-400,
+.light-mode pre .text-green-400,
+.light-mode code .text-emerald-400,
+.light-mode code .text-green-400 {
+  color: #4ade80 !important; /* Bright lime green */
+}
+
+.light-mode .bg-black .text-amber-400,
+.light-mode .bg-zinc-950 .text-amber-400 {
+  color: #fbbf24 !important; /* Bright amber warning */
+}
+
+/* Border overrides */
+.light-mode .border-white\/5,
+.light-mode .border-white\/10,
+.light-mode .border-white\/15,
+.light-mode .border-slate-800,
+.light-mode .border-zinc-800 {
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+/* ================= THE CRITICAL FIX: EXEMPT CONSOLE & TERMINAL TEXTS =================
+   We only override dark-to-light text colors on general visual markup,
+   while protecting any text inside terminals, consoles, or code blocks! */
+.light-mode .text-white:not(.font-mono *, .bg-black *, .bg-zinc-950 *, .bg-[#050508] *, .bg-[#030304] *, .bg-[#08080c] *, .bg-zinc-900 *, .terminal-output *) {
+  color: #0f172a !important; /* Dark slate-900 primary headers */
+}
+
+.light-mode .text-slate-100:not(.font-mono *, .bg-black *, .bg-zinc-950 *, .bg-[#050508] *, .bg-[#030304] *, .bg-[#08080c] *, .bg-zinc-900 *, .terminal-output *),
+.light-mode .text-slate-200:not(.font-mono *, .bg-black *, .bg-zinc-950 *, .bg-[#050508] *, .bg-[#030304] *, .bg-[#08080c] *, .bg-zinc-900 *, .terminal-output *) {
+  color: #1e293b !important; /* Dark slate-800 body text */
+}
+
+.light-mode .text-slate-300:not(.font-mono *, .bg-black *, .bg-zinc-950 *, .bg-[#050508] *, .bg-[#030304] *, .bg-[#08080c] *, .bg-zinc-900 *, .terminal-output *) {
+  color: #334155 !important; /* Slate-700 description texts */
+}
+
+.light-mode .text-slate-400:not(.font-mono *, .bg-black *, .bg-zinc-950 *, .bg-[#050508] *, .bg-[#030304] *, .bg-[#08080c] *, .bg-zinc-900 *, .terminal-output *) {
+  color: #475569 !important; /* Slate-600 subtexts */
+}
+
+.light-mode .text-slate-500:not(.font-mono *, .bg-black *, .bg-zinc-950 *, .bg-[#050508] *, .bg-[#030304] *, .bg-[#08080c] *, .bg-zinc-900 *, .terminal-output *) {
+  color: #64748b !important; /* Slate-500 timestamps/counters */
+}
+
+/* Buttons, list items & hovering rules */
+.light-mode .hover\:bg-white\/\[0\.02\]:hover {
+  background-color: #f1f5f9 !important;
+}
+
+.light-mode .hover\:bg-white\/5:hover {
+  background-color: #e2e8f0 !important;
+}
+
+.light-mode .hover\:border-white\/10:hover {
+  border-color: rgba(15, 23, 42, 0.15) !important;
+}
+
+.light-mode .hover\:bg-\[\#15151a\]:hover {
+  background-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+/* Tab button specific rules in light mode */
+.light-mode button[id^="tab-btn-"] {
+  border-color: transparent !important;
+}
+
+.light-mode button[id^="tab-btn-"].bg-\[\#15151a\] {
+  background-color: #e2e8f0 !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+  color: #0369a1 !important; /* High contrast sky brand color */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02) !important;
+}
+
+/* Accent details */
+.light-mode .text-cyan-400 {
+  color: #0284c7 !important; /* W3Schools / Contabo primary sky-blue */
+}
+
+.light-mode .text-cyan-500 {
+  color: #0369a1 !important;
+}
+
+.light-mode .text-emerald-400 {
+  color: #166534 !important; /* Clean rich green for active / resolved items */
+}
+
+.light-mode .text-purple-400 {
+  color: #7e22ce !important; /* Rich purple */
+}
+
+.light-mode .text-amber-400 {
+  color: #b45309 !important; /* Warm clean amber */
+}
+
+.light-mode .bg-cyan-500\/10 {
+  background-color: rgba(2, 132, 199, 0.08) !important;
+}
+
+.light-mode .border-cyan-500\/20 {
+  border-color: rgba(2, 132, 199, 0.15) !important;
+}
+
+.light-mode .bg-emerald-500\/10 {
+  background-color: rgba(22, 101, 52, 0.06) !important;
+}
+
+.light-mode .border-emerald-500\/20 {
+  border-color: rgba(22, 101, 52, 0.12) !important;
+}
+
+.light-mode .bg-amber-500\/10 {
+  background-color: rgba(180, 83, 9, 0.06) !important;
+}
+
+.light-mode .border-amber-500\/20 {
+  border-color: rgba(180, 83, 9, 0.12) !important;
+}
+
+.light-mode .bg-indigo-600\/\[0\.03\] {
+  background-color: rgba(79, 70, 229, 0.03) !important;
+}
+
+.light-mode .border-indigo-500\/20 {
+  border-color: rgba(79, 70, 229, 0.12) !important;
+}
+
+/* Custom shadow animations */
+.shadow-glow-cyan {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.light-mode .shadow-glow-cyan {
+  box-shadow: 0 4px 20px rgba(2, 132, 199, 0.08) !important;
+}
+
+.light-mode .shadow-glow-indigo {
+  box-shadow: 0 4px 20px rgba(79, 70, 229, 0.06) !important;
+}
+
+/* Header fonts and tracking like Contabo / Saira */
+h1, h2, h3, h4, h5 {
+  font-family: "Source Sans 3", "Montserrat", "Outfit", sans-serif;
+  letter-spacing: -0.015em;
+  font-weight: 700;
+}
+
+/* Sizing refinements for breathing space and clean reading layout */
+main {
+  gap: 2rem !important; /* Larger gutters */
+}
+
+.light-mode input, .light-mode select, .light-mode textarea {
+  background-color: #f1f5f9 !important;
+  border-color: rgba(15, 23, 42, 0.1) !important;
+  color: #0f172a !important;
+}
+
+.light-mode input:focus, .light-mode select:focus {
+  border-color: #0284c7 !important;
+  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15) !important;
+  outline: none;
+}
