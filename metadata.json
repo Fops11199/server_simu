@@ -1,0 +1,6 @@
+{
+  "name": "HostLab",
+  "description": "An interactive hosting simulator to learn DNS, Linux terminal, cPanel, and server administration through practical missions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
