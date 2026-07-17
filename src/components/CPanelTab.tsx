@@ -6,6 +6,23 @@ import {
   Server, Network, Database as DbIcon, Shield, Globe, Clock, RefreshCw, Edit3, Save, X, Eye, EyeOff
 } from 'lucide-react';
 import { getNodeByPath, setNodeInFs, deleteNodeInFs, cleanPath } from '../lib/simulatorEngine';
+import { useUIStore } from '../stores/useUIStore';
+
+const CompanionHelp: React.FC<{ text: string }> = ({ text }) => {
+  const { companionOpen } = useUIStore();
+  if (!companionOpen) return null;
+  return (
+    <span className="relative group cursor-help inline-block ml-1.5 shrink-0 select-none normal-case font-sans">
+      <span className="w-4 h-4 rounded-full bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-[10px] font-bold flex items-center justify-center animate-pulse">
+        ?
+      </span>
+      <span className="absolute z-[999] hidden group-hover:block w-52 p-2.5 bg-slate-950 border border-yellow-500/30 text-slate-350 text-[10px] rounded-lg shadow-2xl leading-normal bottom-full mb-2 left-1/2 -translate-x-1/2">
+        {text}
+        <span className="absolute left-1/2 -bottom-1 -translate-x-1/2 w-2 h-2 bg-slate-950 border-r border-b border-yellow-500/30 rotate-45"></span>
+      </span>
+    </span>
+  );
+};
 
 type SubSection = 'file_manager' | 'dns_editor' | 'databases' | 'ssl' | 'domains' | 'cron';
 
@@ -390,6 +407,7 @@ const DnsEditorView: React.FC = () => {
       <form onSubmit={handleAdd} className="bg-[#050507] border border-white/5 rounded-lg p-4 space-y-4">
         <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2 flex items-center gap-2">
           <Plus className="w-4 h-4 text-cyan-400" /> Add New DNS Zone Record
+          <CompanionHelp text="A record maps host to IP. CNAME creates aliases. MX record defines mail exchangers, e.g. mail.domain.local with preference." />
         </h4>
 
         <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
@@ -539,6 +557,7 @@ const DatabasesView: React.FC = () => {
         <form onSubmit={handleCreateDb} className="bg-[#050507] border border-white/5 rounded-lg p-4 space-y-3">
           <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1 flex items-center gap-1.5">
             <Plus className="w-4 h-4 text-emerald-400" /> Create New Database
+            <CompanionHelp text="Database holds application data. After creating a database, remember to create a database user and assign them to the database." />
           </h4>
           <div>
             <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">DB Name</label>
@@ -561,6 +580,7 @@ const DatabasesView: React.FC = () => {
         <form onSubmit={handleCreateUser} className="bg-[#050507] border border-white/5 rounded-lg p-4 space-y-3">
           <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1 flex items-center gap-1.5">
             <Plus className="w-4 h-4 text-emerald-400" /> Create Database User
+            <CompanionHelp text="Database user defines credentials (username/password) used by your application to authenticate and query Postgres." />
           </h4>
           <div>
             <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Username</label>
@@ -584,6 +604,7 @@ const DatabasesView: React.FC = () => {
       <form onSubmit={handleAssign} className="bg-[#050507] border border-white/5 rounded-lg p-4 space-y-4 select-none">
         <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1 flex items-center gap-1.5">
           <Edit3 className="w-4 h-4 text-blue-400" /> Assign User Access to Database
+          <CompanionHelp text="Links database credentials to specific database tables, granting privileges to allow the user profile to read/write tables." />
         </h4>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>

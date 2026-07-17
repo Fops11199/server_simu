@@ -6,6 +6,23 @@ import {
   ExternalLink, Server, FileText, ChevronRight, CheckCircle, ArrowRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useUIStore } from '../stores/useUIStore';
+
+const CompanionHelp: React.FC<{ text: string }> = ({ text }) => {
+  const { companionOpen } = useUIStore();
+  if (!companionOpen) return null;
+  return (
+    <span className="relative group cursor-help inline-block ml-1.5 shrink-0 select-none normal-case font-sans">
+      <span className="w-4 h-4 rounded-full bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 text-[10px] font-bold flex items-center justify-center animate-pulse">
+        ?
+      </span>
+      <span className="absolute z-[999] hidden group-hover:block w-52 p-2.5 bg-slate-950 border border-yellow-500/30 text-slate-350 text-[10px] rounded-lg shadow-2xl leading-normal bottom-full mb-2 left-1/2 -translate-x-1/2">
+        {text}
+        <span className="absolute left-1/2 -bottom-1 -translate-x-1/2 w-2 h-2 bg-slate-950 border-r border-b border-yellow-500/30 rotate-45"></span>
+      </span>
+    </span>
+  );
+};
 
 type HostingerMenu = 'dashboard' | 'websites' | 'domains' | 'databases' | 'ssl' | 'emails';
 
@@ -286,6 +303,7 @@ export const HostingerTab: React.FC = () => {
                   <form onSubmit={handleCreateWebsite} className="bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-3.5">
                     <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wide flex items-center gap-1.5">
                       <Plus className="w-4 h-4 text-[#673DE6]" /> Create / Install New Website
+                      <CompanionHelp text="Shared web space installer. Allocates folder directories (/var/www) matching the domain record specified." />
                     </h4>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -489,7 +507,10 @@ export const HostingerTab: React.FC = () => {
               {activeMenu === 'ssl' && (
                 <div className="space-y-4">
                   <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl text-xs space-y-1.5">
-                    <h4 className="font-bold text-slate-800 uppercase tracking-wide">Let's Encrypt Certificate Authority</h4>
+                    <h4 className="font-bold text-slate-800 uppercase tracking-wide flex items-center gap-1.5">
+                      Let's Encrypt Certificate Authority
+                      <CompanionHelp text="SSL/TLS certificates authenticate web endpoints. Activating SSL forces secure HTTPS routing, encrypting visitor sessions." />
+                    </h4>
                     <p className="text-slate-500 text-[11px] leading-relaxed">
                       Secure Socket Layer (SSL/HTTPS) secures communication packets between browser clients and your Hostinger Nginx nodes. Provisioning is completely automated and maps in 1-click.
                     </p>

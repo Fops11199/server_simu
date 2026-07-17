@@ -1,11 +1,136 @@
-@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Inter:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Outfit:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Inter:ital,wght@0,300..900;1,300..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Outfit:wght@100..900&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Source Sans 3", "Inter", "Segoe UI", sans-serif;
-  --font-display: "Source Sans 3", "Montserrat", "Outfit", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-sans: "Inter", "Source Sans 3", "Segoe UI", sans-serif;
+  --font-display: "IBM Plex Mono", "JetBrains Mono", monospace;
+  --font-mono: "IBM Plex Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
+
+:root {
+  /* Shell neutrals */
+  --ink:            #10141C;   /* primary dark background */
+  --steel:          #1B212C;   /* card / raised surface on dark */
+  --steel-line:     #2A3140;   /* border on dark surfaces */
+  --paper:          #F6F5F1;   /* light background (dashboard, lesson panels) */
+  --paper-card:     #FFFFFF;   /* card on light */
+  --paper-line:     #E4E1D8;   /* border on light surfaces */
+  --ash:            #8B93A3;   /* secondary / muted text on dark */
+  --graphite:       #5B5F6B;   /* secondary / muted text on light */
+  --text-dark-bg:   #EDEEF0;   /* primary text on dark */
+  --text-light-bg:  #171A1F;   /* primary text on light */
+
+  /* Brand accent (buttons, links, focus, primary CTA) */
+  --accent-fiber:   #2FA9DE;   /* "fiber" cyan-blue — think fiber-optic glow, not corporate blue */
+  --accent-fiber-dim: #1D6E92; /* hover/pressed state */
+
+  /* Status LEDs — mimic real rack/server indicator lights. Use ONLY for lab feedback, never decoration. */
+  --status-success: #3FBF8F;   /* task validated */
+  --status-warning: #E8A33D;   /* hint available / partial */
+  --status-error:   #C24A3D;   /* task failed */
+  --status-idle:    #4A5568;   /* not started / offline */
+
+  /* Per-module accent palette */
+  --module-hostinger:     #6C5CE0;  /* muted violet, echoes Hostinger's purple */
+  --module-contabo:       #E0653F;  /* muted terracotta-red, echoes Contabo's orange */
+  --module-aws:           #F2A93C;  /* muted gold-amber, echoes AWS's orange */
+  --module-cpanel:        #C9622B;  /* rust/burnt orange, echoes cPanel's orange but darker/browner so it doesn't collide with Contabo */
+  --module-digitalocean:  #3B82F6;  /* ocean blue, echoes DigitalOcean's blue */
+}
+
+/* =========================================================================
+   MARKETING SHELL STYLES
+   These apply specifically to the homepage/shell unless otherwise overridden.
+   ========================================================================= */
+
+body {
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  font-size: 16px;
+  background-color: var(--ink);
+  color: var(--text-dark-bg);
+}
+
+/* Typography scale per spec (scoped to homepage-shell) */
+.homepage-shell h1, .homepage-shell .h1 {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 5vw, 64px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.homepage-shell h2, .homepage-shell .h2 {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.homepage-shell h3, .homepage-shell .h3 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.homepage-shell .text-body-large {
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.homepage-shell .text-caption {
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.homepage-shell .font-data {
+  font-family: var(--font-display);
+  font-size: 14px;
+}
+
+/* Focus styles */
+*:focus-visible {
+  outline: 2px solid var(--accent-fiber);
+  outline-offset: 2px;
+}
+
+/* Component Patterns */
+.btn-primary {
+  background-color: var(--accent-fiber);
+  color: var(--ink);
+  border-radius: 8px;
+  font-family: var(--font-display);
+  padding: 12px 28px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: var(--accent-fiber-dim);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--text-dark-bg);
+  border: 1px solid var(--steel-line);
+  border-radius: 8px;
+  font-family: var(--font-display);
+  padding: 12px 28px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  border-color: rgba(47, 169, 222, 0.4); /* --accent-fiber at 40% */
+}
+
+/* =========================================================================
+   LEGACY LAB APP STYLES (PRESERVED)
+   ========================================================================= */
 
 /* Custom glow animations and effects */
 @utility shadow-glow-cyan {
@@ -22,13 +147,6 @@
 
 @utility shadow-glow-red {
   box-shadow: 0 0 12px rgba(239, 68, 68, 0.2);
-}
-
-/* Breathing space, clean sizing and global line height */
-body {
-  font-family: "Source Sans 3", "Inter", "Segoe UI", sans-serif;
-  line-height: 1.75; /* Much more breathable line spacing like W3Schools */
-  font-size: 15px; /* Slightly larger, more comfortable base font size */
 }
 
 /* Pristine Light Mode Styles & Selective Overrides */
@@ -138,24 +256,24 @@ body {
 /* ================= THE CRITICAL FIX: EXEMPT CONSOLE & TERMINAL TEXTS =================
    We only override dark-to-light text colors on general visual markup,
    while protecting any text inside terminals, consoles, or code blocks! */
-.light-mode .text-white:not(.font-mono *, .bg-black *, .bg-zinc-950 *, .bg-[#050508] *, .bg-[#030304] *, .bg-[#08080c] *, .bg-zinc-900 *, .terminal-output *) {
+.light-mode .text-white:not(.font-mono *, .bg-black *, .bg-zinc-950 *, [class*="bg-[#050508]"] *, [class*="bg-[#030304]"] *, [class*="bg-[#08080c]"] *, .bg-zinc-900 *, .terminal-output *) {
   color: #0f172a !important; /* Dark slate-900 primary headers */
 }
 
-.light-mode .text-slate-100:not(.font-mono *, .bg-black *, .bg-zinc-950 *, .bg-[#050508] *, .bg-[#030304] *, .bg-[#08080c] *, .bg-zinc-900 *, .terminal-output *),
-.light-mode .text-slate-200:not(.font-mono *, .bg-black *, .bg-zinc-950 *, .bg-[#050508] *, .bg-[#030304] *, .bg-[#08080c] *, .bg-zinc-900 *, .terminal-output *) {
+.light-mode .text-slate-100:not(.font-mono *, .bg-black *, .bg-zinc-950 *, [class*="bg-[#050508]"] *, [class*="bg-[#030304]"] *, [class*="bg-[#08080c]"] *, .bg-zinc-900 *, .terminal-output *),
+.light-mode .text-slate-200:not(.font-mono *, .bg-black *, .bg-zinc-950 *, [class*="bg-[#050508]"] *, [class*="bg-[#030304]"] *, [class*="bg-[#08080c]"] *, .bg-zinc-900 *, .terminal-output *) {
   color: #1e293b !important; /* Dark slate-800 body text */
 }
 
-.light-mode .text-slate-300:not(.font-mono *, .bg-black *, .bg-zinc-950 *, .bg-[#050508] *, .bg-[#030304] *, .bg-[#08080c] *, .bg-zinc-900 *, .terminal-output *) {
+.light-mode .text-slate-300:not(.font-mono *, .bg-black *, .bg-zinc-950 *, [class*="bg-[#050508]"] *, [class*="bg-[#030304]"] *, [class*="bg-[#08080c]"] *, .bg-zinc-900 *, .terminal-output *) {
   color: #334155 !important; /* Slate-700 description texts */
 }
 
-.light-mode .text-slate-400:not(.font-mono *, .bg-black *, .bg-zinc-950 *, .bg-[#050508] *, .bg-[#030304] *, .bg-[#08080c] *, .bg-zinc-900 *, .terminal-output *) {
+.light-mode .text-slate-400:not(.font-mono *, .bg-black *, .bg-zinc-950 *, [class*="bg-[#050508]"] *, [class*="bg-[#030304]"] *, [class*="bg-[#08080c]"] *, .bg-zinc-900 *, .terminal-output *) {
   color: #475569 !important; /* Slate-600 subtexts */
 }
 
-.light-mode .text-slate-500:not(.font-mono *, .bg-black *, .bg-zinc-950 *, .bg-[#050508] *, .bg-[#030304] *, .bg-[#08080c] *, .bg-zinc-900 *, .terminal-output *) {
+.light-mode .text-slate-500:not(.font-mono *, .bg-black *, .bg-zinc-950 *, [class*="bg-[#050508]"] *, [class*="bg-[#030304]"] *, [class*="bg-[#08080c]"] *, .bg-zinc-900 *, .terminal-output *) {
   color: #64748b !important; /* Slate-500 timestamps/counters */
 }
 
@@ -255,18 +373,6 @@ body {
   box-shadow: 0 4px 20px rgba(79, 70, 229, 0.06) !important;
 }
 
-/* Header fonts and tracking like Contabo / Saira */
-h1, h2, h3, h4, h5 {
-  font-family: "Source Sans 3", "Montserrat", "Outfit", sans-serif;
-  letter-spacing: -0.015em;
-  font-weight: 700;
-}
-
-/* Sizing refinements for breathing space and clean reading layout */
-main {
-  gap: 2rem !important; /* Larger gutters */
-}
-
 .light-mode input, .light-mode select, .light-mode textarea {
   background-color: #f1f5f9 !important;
   border-color: rgba(15, 23, 42, 0.1) !important;
@@ -278,3 +384,14 @@ main {
   box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15) !important;
   outline: none;
 }
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+

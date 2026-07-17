@@ -6,6 +6,23 @@ import {
   ExternalLink, ChevronRight, Lock, User, Users, FileCode, CheckCircle, AlertTriangle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useUIStore } from '../stores/useUIStore';
+
+const CompanionHelp: React.FC<{ text: string }> = ({ text }) => {
+  const { companionOpen } = useUIStore();
+  if (!companionOpen) return null;
+  return (
+    <span className="relative group cursor-help inline-block ml-1.5 shrink-0 select-none normal-case font-sans">
+      <span className="w-4 h-4 rounded-full bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 text-[10px] font-bold flex items-center justify-center animate-pulse">
+        ?
+      </span>
+      <span className="absolute z-[999] hidden group-hover:block w-52 p-2.5 bg-slate-950 border border-yellow-500/30 text-slate-350 text-[10px] rounded-lg shadow-2xl leading-normal bottom-full mb-2 left-1/2 -translate-x-1/2">
+        {text}
+        <span className="absolute left-1/2 -bottom-1 -translate-x-1/2 w-2 h-2 bg-slate-950 border-r border-b border-yellow-500/30 rotate-45"></span>
+      </span>
+    </span>
+  );
+};
 
 type AwsService = 'dashboard' | 'ec2' | 's3' | 'rds' | 'route53' | 'iam';
 
@@ -477,8 +494,9 @@ export const AwsTab: React.FC = () => {
                 <div className="space-y-4 select-none">
                   {/* Create S3 Bucket form */}
                   <form onSubmit={handleCreateBucket} className="bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-3.5">
-                    <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wide">
+                    <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wide flex items-center gap-1.5">
                       Create S3 Storage Bucket (Global Object Storage)
+                      <CompanionHelp text="Simple Storage Service (S3) provides cloud folders (buckets) to store media, files, and templates securely." />
                     </h4>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 text-xs items-end">
@@ -559,8 +577,9 @@ export const AwsTab: React.FC = () => {
                 <div className="space-y-4 font-sans text-xs">
                   {/* Create RDS Instance form */}
                   <form onSubmit={handleCreateRds} className="bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-3.5">
-                    <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wide">
+                    <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wide flex items-center gap-1.5">
                       Provision Managed Relational SQL Database (RDS)
+                      <CompanionHelp text="Relational Database Service (RDS). Spins up managed database endpoints (Postgres/MySQL) with built-in backup controls." />
                     </h4>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -1,6 +1,11 @@
-import { Mission, SimulatorState } from '../types';
-import { getNodeByPath, parseNginxConfig } from './simulatorEngine';
+import type { Mission } from '../types/missions';
+import type { SimulatorCoreState } from '../types/simulator';
+import { getNodeByPath, parseNginxConfig } from '../engine';
 
+/**
+ * Core missions — data-driven: each objective carries its own validator function.
+ * To add a new mission, just add a new object here. No switch statement needed.
+ */
 export const CORE_MISSIONS: Mission[] = [
   {
     id: 'mission_1',
@@ -9,7 +14,7 @@ export const CORE_MISSIONS: Mission[] = [
     category: 'Terminal',
     ticketNumber: 1042,
     clientName: 'Sora Web Design',
-    description: 'The clients default static website is displaying a 404 Not Found error. Nginx is serving from /var/www/html, but the directory is empty.',
+    description: 'The client\'s default static website is displaying a 404 Not Found error. Nginx is serving from /var/www/html, but the directory is empty.',
     ticketMessage: `Hi support team!
 Our main website at hostlab.local is showing a "404 Not Found" error.
 Our web designer created a beautiful index.html file for us, and it is sitting in the student home directory (/home/student/index.html).
@@ -18,12 +23,26 @@ But Nginx is looking in /var/www/html and the landing page is not appearing.
 Can you copy our index.html file into Nginx's default document root directory (/var/www/html/) so it displays correctly?
 Please make sure the Nginx service is running after you do this. Thank you!`,
     objectives: [
-      { id: 'obj_1_nginx', text: 'Ensure the Nginx service is running', completed: false },
-      { id: 'obj_1_file', text: 'Copy index.html from /home/student/ to /var/www/html/', completed: false }
+      {
+        id: 'obj_1_nginx',
+        text: 'Ensure the Nginx service is running',
+        completed: false,
+        validator: (state: SimulatorCoreState) => state.services.nginx === 'running',
+      },
+      {
+        id: 'obj_1_file',
+        text: 'Copy index.html from /home/student/ to /var/www/html/',
+        completed: false,
+        validator: (state: SimulatorCoreState) => {
+          const node = getNodeByPath(state.fs, '/var/www/html/index.html');
+          return node !== null && node.type === 'file' && node.content.includes('HostLab');
+        },
+      },
     ],
     xpReward: 100,
-    completed: false
+    completed: false,
   },
+
   {
     id: 'mission_2',
     title: 'DNS Subdomain Mismatch',
@@ -39,11 +58,18 @@ It should be pointing to our primary public server IP: 203.0.113.10.
 
 Could you update our DNS Zone Records in the cPanel Zone Editor or terminal to point the "api.hostlab.local" A-record to "203.0.113.10"?`,
     objectives: [
-      { id: 'obj_2_dns', text: 'Update the DNS A record for api.hostlab.local to 203.0.113.10', completed: false }
+      {
+        id: 'obj_2_dns',
+        text: 'Update the DNS A record for api.hostlab.local to 203.0.113.10',
+        completed: false,
+        validator: (state: SimulatorCoreState) =>
+          state.dnsRecords.some(r => r.name === 'api.hostlab.local' && r.type === 'A' && r.value === '203.0.113.10'),
+      },
     ],
     xpReward: 120,
-    completed: false
+    completed: false,
   },
+
   {
     id: 'mission_3',
     title: 'Nginx Reverse Proxy Fix',
@@ -64,13 +90,37 @@ Could you:
 
 Let's get this API back online!`,
     objectives: [
-      { id: 'obj_3_node', text: 'Start the node-api system service', completed: false },
-      { id: 'obj_3_config', text: 'Change proxy_pass in Nginx config to port 5000', completed: false },
-      { id: 'obj_3_nginx', text: 'Restart Nginx without any syntax errors', completed: false }
+      {
+        id: 'obj_3_node',
+        text: 'Start the node-api system service',
+        completed: false,
+        validator: (state: SimulatorCoreState) => state.services['node-api'] === 'running',
+      },
+      {
+        id: 'obj_3_config',
+        text: 'Change proxy_pass in Nginx config to port 5000',
+        completed: false,
+        validator: (state: SimulatorCoreState) => {
+          const node = getNodeByPath(state.fs, '/etc/nginx/sites-available/default');
+          if (!node || node.type !== 'file') return false;
+          const blocks = parseNginxConfig(node.content);
+          if (blocks.some(b => b.hasSyntaxError)) return false;
+          const apiBlock = blocks.find(b => b.serverName.includes('api.hostlab.local'));
+          const proxyVal = apiBlock?.proxies['/'] || '';
+          return proxyVal.includes('5000') && !proxyVal.includes('8080');
+        },
+      },
+      {
+        id: 'obj_3_nginx',
+        text: 'Restart Nginx without any syntax errors',
+        completed: false,
+        validator: (state: SimulatorCoreState) => state.services.nginx === 'running',
+      },
     ],
     xpReward: 180,
-    completed: false
+    completed: false,
   },
+
   {
     id: 'mission_4',
     title: 'Secure the Connection (SSL)',
@@ -86,11 +136,18 @@ This is because we don't have an SSL Certificate installed for hostlab.local.
 Can you issue and install a Let's Encrypt SSL certificate for "hostlab.local" using cPanel's SSL Manager (or our terminal tool)?
 This will secure our site and enable HTTPS connection. Thank you!`,
     objectives: [
-      { id: 'obj_4_ssl', text: 'Issue/Enable SSL certificate for hostlab.local', completed: false }
+      {
+        id: 'obj_4_ssl',
+        text: 'Issue/Enable SSL certificate for hostlab.local',
+        completed: false,
+        validator: (state: SimulatorCoreState) =>
+          state.cpanel.sslCertificates.includes('hostlab.local'),
+      },
     ],
     xpReward: 110,
-    completed: false
+    completed: false,
   },
+
   {
     id: 'mission_5',
     title: 'Database Authentication Fail',
@@ -98,7 +155,7 @@ This will secure our site and enable HTTPS connection. Thank you!`,
     category: 'Database',
     ticketNumber: 1046,
     clientName: 'PixelCraft CRM',
-    description: 'The clients application cannot connect to the database. PostgreSQL is inactive, and the required database and user do not exist.',
+    description: 'The client\'s application cannot connect to the database. PostgreSQL is inactive, and the required database and user do not exist.',
     ticketMessage: `Hello Support,
 Our new CRM application is failing to connect to the database. We get a "Database connection refused" error.
 We need a clean PostgreSQL database set up on this server with these exact parameters:
@@ -108,109 +165,123 @@ We need a clean PostgreSQL database set up on this server with these exact param
 
 Can you configure this database environment for us using cPanel Databases or terminal?`,
     objectives: [
-      { id: 'obj_5_service', text: 'Start the postgresql database service', completed: false },
-      { id: 'obj_5_db', text: 'Create a database named hostlab_db', completed: false },
-      { id: 'obj_5_user', text: 'Create user host_admin and assign to hostlab_db', completed: false }
+      {
+        id: 'obj_5_service',
+        text: 'Start the postgresql database service',
+        completed: false,
+        validator: (state: SimulatorCoreState) => state.services.postgresql === 'running',
+      },
+      {
+        id: 'obj_5_db',
+        text: 'Create a database named hostlab_db',
+        completed: false,
+        validator: (state: SimulatorCoreState) =>
+          state.cpanel.databases.some(db => db.name === 'hostlab_db'),
+      },
+      {
+        id: 'obj_5_user',
+        text: 'Create user host_admin and assign to hostlab_db',
+        completed: false,
+        validator: (state: SimulatorCoreState) => {
+          const userCreated = state.cpanel.dbUsers.some(u => u.username === 'host_admin');
+          const assigned = state.cpanel.databases.some(
+            db => db.name === 'hostlab_db' && db.users.includes('host_admin')
+          );
+          return userCreated && assigned;
+        },
+      },
     ],
     xpReward: 200,
-    completed: false
-  }
+    completed: false,
+  },
+
+  // ==========================================
+  // NEW MISSIONS — unlocked by the new architecture
+  // ==========================================
+  {
+    id: 'mission_6',
+    title: 'Email Account Setup',
+    difficulty: 'Beginner',
+    category: 'Terminal',
+    ticketNumber: 1047,
+    clientName: 'BlueHarbour Consulting',
+    description: 'The client needs a professional business email account created on their hosting account.',
+    ticketMessage: `Hi HostLab support,
+We recently signed up for your hosting and need our business email configured.
+We would like the email address contact@hostlab.local created with at least 250 MB quota.
+
+Can you set this up in the email section of the cPanel?`,
+    objectives: [
+      {
+        id: 'obj_6_email',
+        text: 'Create email account contact@hostlab.local with 250 MB+ quota',
+        completed: false,
+        validator: (state: SimulatorCoreState) =>
+          state.cpanel.emails.some(
+            e => e.address === 'contact@hostlab.local' && parseInt(e.quota) >= 250
+          ),
+      },
+    ],
+    xpReward: 80,
+    completed: false,
+  },
+
+  {
+    id: 'mission_7',
+    title: 'Scheduled Backup Cron Job',
+    difficulty: 'Intermediate',
+    category: 'Terminal',
+    ticketNumber: 1048,
+    clientName: 'DeltaForce Media',
+    description: 'The client needs a daily automated backup cron job configured to run at midnight.',
+    ticketMessage: `Hello,
+We need our server configured to run automated backups every day at midnight (00:00).
+Please add a cron job that runs the command: /home/student/backup.sh
+It should run at minute 0, hour 0, every day.
+
+Please set this up in the cPanel Cron Jobs section.`,
+    objectives: [
+      {
+        id: 'obj_7_cron',
+        text: 'Add cron job: /home/student/backup.sh at 00:00 daily',
+        completed: false,
+        validator: (state: SimulatorCoreState) =>
+          state.cpanel.cronJobs.some(
+            j => j.command.includes('backup.sh') && j.hour === '0' && j.minute === '0'
+          ),
+      },
+    ],
+    xpReward: 130,
+    completed: false,
+  },
 ];
 
-export function validateMission(missionId: string, state: SimulatorState): { completed: boolean; objectiveStatus: { [id: string]: boolean } } {
-  const objectiveStatus: { [id: string]: boolean } = {};
-  let allCompleted = true;
+/**
+ * Validate all non-completed missions against current simulator state.
+ * Returns updated missions array with objective statuses recalculated.
+ */
+export function validateAllMissions(
+  missions: Mission[],
+  state: SimulatorCoreState
+): Mission[] {
+  return missions.map(mission => {
+    if (mission.completed) return mission;
 
-  switch (missionId) {
-    case 'mission_1': {
-      // 1. Ensure Nginx is running
-      const isNginxRunning = state.services.nginx === 'running';
-      objectiveStatus['obj_1_nginx'] = isNginxRunning;
+    // Re-attach validators from source (in case loaded from localStorage without them)
+    const sourceMission = CORE_MISSIONS.find(m => m.id === mission.id);
 
-      // 2. index.html copied to /var/www/html
-      const fileNode = getNodeByPath(state.fs, '/var/www/html/index.html');
-      const isFileCopied = fileNode !== null && fileNode.type === 'file' && fileNode.content.includes('HostLab');
-      objectiveStatus['obj_1_file'] = isFileCopied;
+    const updatedObjectives = mission.objectives.map((obj, idx) => {
+      const validator = sourceMission?.objectives[idx]?.validator;
+      const isCompleted = validator ? validator(state) : obj.completed;
+      return { ...obj, completed: isCompleted };
+    });
 
-      allCompleted = isNginxRunning && isFileCopied;
-      break;
-    }
+    const allCompleted = updatedObjectives.every(o => o.completed);
 
-    case 'mission_2': {
-      // Update DNS A record for api.hostlab.local to 203.0.113.10
-      const record = state.dnsRecords.find(
-        r => r.name === 'api.hostlab.local' && r.type === 'A' && r.value === '203.0.113.10'
-      );
-      const isDnsCorrect = record !== undefined;
-      objectiveStatus['obj_2_dns'] = isDnsCorrect;
-
-      allCompleted = isDnsCorrect;
-      break;
-    }
-
-    case 'mission_3': {
-      // 1. node-api is running
-      const isNodeRunning = state.services['node-api'] === 'running';
-      objectiveStatus['obj_3_node'] = isNodeRunning;
-
-      // 2. proxy_pass is 5000
-      const nginxConfigNode = getNodeByPath(state.fs, '/etc/nginx/sites-available/default');
-      let isConfigCorrect = false;
-      if (nginxConfigNode && nginxConfigNode.type === 'file') {
-        const blocks = parseNginxConfig(nginxConfigNode.content);
-        const syntaxError = blocks.some(b => b.hasSyntaxError);
-        
-        // Find api.hostlab.local block and check proxies
-        const apiBlock = blocks.find(b => b.serverName.includes('api.hostlab.local'));
-        if (apiBlock && !syntaxError) {
-          const proxyVal = apiBlock.proxies['/'] || '';
-          if (proxyVal.includes('5000') && !proxyVal.includes('8080')) {
-            isConfigCorrect = true;
-          }
-        }
-      }
-      objectiveStatus['obj_3_config'] = isConfigCorrect;
-
-      // 3. Nginx is running (successfully restarted without errors)
-      const isNginxRunning = state.services.nginx === 'running';
-      objectiveStatus['obj_3_nginx'] = isNginxRunning;
-
-      allCompleted = isNodeRunning && isConfigCorrect && isNginxRunning;
-      break;
-    }
-
-    case 'mission_4': {
-      // SSL certificate issued for hostlab.local
-      const isSslEnabled = state.cpanel.sslCertificates.includes('hostlab.local');
-      objectiveStatus['obj_4_ssl'] = isSslEnabled;
-
-      allCompleted = isSslEnabled;
-      break;
-    }
-
-    case 'mission_5': {
-      // 1. postgresql is running
-      const isPgRunning = state.services.postgresql === 'running';
-      objectiveStatus['obj_5_service'] = isPgRunning;
-
-      // 2. hostlab_db database created
-      const dbExists = state.cpanel.databases.some(db => db.name === 'hostlab_db');
-      objectiveStatus['obj_5_db'] = dbExists;
-
-      // 3. host_admin created and assigned to hostlab_db
-      const userCreated = state.cpanel.dbUsers.some(u => u.username === 'host_admin');
-      const dbAndUserAssigned = state.cpanel.databases.some(
-        db => db.name === 'hostlab_db' && db.users.includes('host_admin')
-      );
-      objectiveStatus['obj_5_user'] = userCreated && dbAndUserAssigned;
-
-      allCompleted = isPgRunning && dbExists && userCreated && dbAndUserAssigned;
-      break;
-    }
-
-    default:
-      allCompleted = false;
-  }
-
-  return { completed: allCompleted, objectiveStatus };
+    return {
+      ...mission,
+      objectives: updatedObjectives,
+      completed: allCompleted,
+    };
+  });
 }

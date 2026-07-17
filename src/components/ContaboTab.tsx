@@ -7,6 +7,23 @@ import {
   Sparkles, Key, DollarSign, PlusCircle, Monitor
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useUIStore } from '../stores/useUIStore';
+
+const CompanionHelp: React.FC<{ text: string }> = ({ text }) => {
+  const { companionOpen } = useUIStore();
+  if (!companionOpen) return null;
+  return (
+    <span className="relative group cursor-help inline-block ml-1.5 shrink-0 select-none normal-case font-sans">
+      <span className="w-4 h-4 rounded-full bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 text-[10px] font-bold flex items-center justify-center animate-pulse">
+        ?
+      </span>
+      <span className="absolute z-[999] hidden group-hover:block w-52 p-2.5 bg-slate-950 border border-yellow-500/30 text-slate-350 text-[10px] rounded-lg shadow-2xl leading-normal bottom-full mb-2 left-1/2 -translate-x-1/2">
+        {text}
+        <span className="absolute left-1/2 -bottom-1 -translate-x-1/2 w-2 h-2 bg-slate-950 border-r border-b border-yellow-500/30 rotate-45"></span>
+      </span>
+    </span>
+  );
+};
 
 type ContaboSubMenu = 'services' | 'power' | 'reinstall' | 'rdns' | 'ip' | 'vnc' | 'console';
 
@@ -749,8 +766,9 @@ export const ContaboTab: React.FC = () => {
               {activeMenu === 'power' && (
                 <div className="space-y-6 select-none">
                   <div className="bg-[#0e1625] p-5 rounded-xl border border-white/5 space-y-4">
-                    <h4 className="text-xs font-bold text-slate-200 uppercase tracking-wider">
+                    <h4 className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
                       Virtual Machine Power Action Sockets
+                      <CompanionHelp text="Power operations interact with unmanaged hardware hypervisors. Hard reboot physically resets memory, clearing active crashes." />
                     </h4>
                     
                     <div className="flex flex-wrap gap-3">
@@ -876,8 +894,9 @@ export const ContaboTab: React.FC = () => {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 select-none">
                         <div className="space-y-2">
-                          <label className="block text-xs font-bold text-slate-300 uppercase tracking-wide">
+                          <label className="block text-xs font-bold text-slate-300 uppercase tracking-wide flex items-center gap-1.5">
                             Select Operating System Image
+                            <CompanionHelp text="Operating System installer. Flashes the selected distro (e.g. Rocky Linux) over root blocks, overwriting all code directories." />
                           </label>
                           <select
                             value={selectedOs}

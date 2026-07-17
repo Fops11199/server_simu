@@ -350,3 +350,5 @@ export const INITIAL_SERVICES: ServiceStatus = {
   postgresql: 'stopped', // STOPS FOR POSTGRESQL MISSION
   'node-api': 'stopped'   // STOPS FOR NODE API MISSION
 };
+
+export const INITIAL_SERVER_POWER: 'running' | 'stopped' = 'running';

@@ -83,6 +83,10 @@ export const LabsTab: React.FC<LabsTabProps> = ({ setActiveTab, setActiveProvide
   const [quizScore, setQuizScore] = useState<number>(0);
   const [quizError, setQuizError] = useState<string | null>(null);
   
+  const [expandedCourses, setExpandedCourses] = useState<Record<string, boolean>>({
+    'course_0': true
+  });
+  
   // Graduation/Certificate states
   const [completedQuizzes, setCompletedQuizzes] = useState<Record<string, boolean>>(() => {
     const saved = localStorage.getItem('hostlab_completed_quizzes');
@@ -540,6 +544,267 @@ export const LabsTab: React.FC<LabsTabProps> = ({ setActiveTab, setActiveProvide
         }
       ],
       unlockedLabId: 'lab_6'
+    },
+    {
+      id: 'course_5',
+      title: 'DNS Deep Dive & MX Mail Routing',
+      category: 'Shared Hosting',
+      difficulty: 'Intermediate',
+      creditsReward: 60,
+      badgeColor: 'border-cyan-500/20 bg-cyan-500/10 text-cyan-400',
+      description: 'Master DNS routing records. Learn to configure CNAME aliases, MX mail servers, and TXT credentials, and understand how they translate domains into complex, multi-service channels.',
+      slides: [
+        {
+          title: 'A, CNAME, MX, and TXT Records',
+          concept: 'DNS is more than simple A-records. A CNAME acts as an alias. MX routes email traffic, and TXT contains verification strings (like SPF or DKIM).',
+          illustration: '[ user@hostlab.local ] ────> [ DNS Server ]\n                                  ├── A     ──> 203.0.113.10\n                                  ├── MX    ──> 10 mail.hostlab.local\n                                  └── TXT   ──> "v=spf1 include:mx..."',
+          analogyTitle: 'The Corporate Office Directories',
+          analogyText: 'An A record is a direct phone extension to an executive\'s desk (IP). A CNAME is a nickname (like forwarding \'CEO\' to the CEO\'s name). An MX record is the mailroom address where all physical letters are sorted. A TXT record is a security badge displayed at the lobby desk to verify the office\'s authenticity.',
+          keyPoints: [
+            'MX records point to a mail server domain name, not an IP address directly.',
+            'CNAME records point to another domain name, establishing aliases for services.',
+            'TXT records store arbitrary text often used by external security providers to prevent spam spoofing.'
+          ]
+        },
+        {
+          title: 'Understanding MX Preferences',
+          concept: 'MX records contain a priority number. Lower numbers represent higher priority targets for incoming mail delivery.',
+          illustration: 'Inbound Mail ────> Priority 10 (mail.hostlab.local) [PREFERRED]\n             └───> Priority 20 (backup-mail.hostlab.local) [BACKUP]',
+          analogyTitle: 'The Emergency Call Hierarchy',
+          analogyText: 'If you call an office, you try the primary receptionist first (Priority 10). If they are busy or offline, the call routes to the secondary backup assistant (Priority 20). Mail servers do the same: they always try the lowest priority number first.',
+          keyPoints: [
+            'Standard MX priorities are usually increments of 10 (10, 20, 30).',
+            'If a primary mail server is offline, sender servers hold emails in queues and try backup MX routes.',
+            'MX records must point to a domain name that resolves to an A-record, never an IP directly.'
+          ]
+        },
+        {
+          title: 'DNS Propagation & TTL',
+          concept: 'TTL (Time to Live) determines how long DNS servers cache a record. Changes propagate globally as TTL caches expire.',
+          illustration: '[ DNS Record Update ] ───> [ Roots DNS Servers ] ───(TTL Cache)───> [ Resolvers / Browsers ]',
+          analogyTitle: 'The Menu Board Updates',
+          analogyText: 'If a restaurant changes its daily special (IP address), they must update the menu board. If they print menus weekly (high TTL), customers will order the old specials for days. If they write specials on a chalkboard hourly (low TTL), customers see changes almost instantly, but the waiters spend more time rewriting the board.',
+          keyPoints: [
+            'High TTL values reduce server load by caching lookups longer.',
+            'Low TTL values are useful during migrations to ensure quick failover transitions.',
+            'Propagation delays in the real world can range from minutes to 24 hours depending on ISPs.'
+          ]
+        }
+      ],
+      glossary: [
+        { term: 'MX Record', definition: 'Mail Exchange record mapping a domain name to the mail servers responsible for receiving emails.' },
+        { term: 'CNAME Record', definition: 'Canonical Name record defining an alias mapping one domain name to another.' },
+        { term: 'TXT Record', definition: 'A text record storing descriptive data, commonly used for SPF, DKIM, and site verification.' },
+        { term: 'TTL (Time to Live)', definition: 'A value in seconds indicating how long a DNS resolver should cache a record before querying it again.' },
+        { term: 'DNS Propagation', definition: 'The process of global DNS servers updating their cached records after a change is made.' }
+      ],
+      quiz: [
+        {
+          question: 'Which DNS record type routes emails to the correct mail server?',
+          options: [
+            'A Record',
+            'MX Record',
+            'CNAME Record'
+          ],
+          correctIndex: 1,
+          explanation: 'The MX (Mail Exchange) record directs incoming mail traffic to the appropriate email server for a domain.'
+        },
+        {
+          question: 'If domain.local has two MX records: priority 10 (mail1) and priority 30 (mail2), which mail server will incoming senders try first?',
+          options: [
+            'mail1 (priority 10)',
+            'mail2 (priority 30)',
+            'They will load balance randomly'
+          ],
+          correctIndex: 0,
+          explanation: 'Mail servers deliver incoming emails to the MX record with the lowest preference/priority number first.'
+        },
+        {
+          question: 'What value determines how long a resolver caches a DNS record?',
+          options: [
+            'MX Preference',
+            'TTL (Time to Live)',
+            'CIDR Block'
+          ],
+          correctIndex: 1,
+          explanation: 'TTL (Time to Live) tells DNS resolvers how many seconds to store a query result locally before checking the authoritative server again.'
+        }
+      ],
+      unlockedLabId: 'lab_7'
+    },
+    {
+      id: 'course_6',
+      title: 'Linux Firewall Security (UFW & Hardening)',
+      category: 'VPS Management',
+      difficulty: 'Intermediate',
+      creditsReward: 60,
+      badgeColor: 'border-amber-500/20 bg-amber-500/10 text-amber-400',
+      description: 'Master Linux network defense. Learn the principles of port scanning, active firewalls, and hardening remote server access using the Uncomplicated Firewall (UFW) command line.',
+      slides: [
+        {
+          title: 'Ports and Network Security',
+          concept: 'Every server runs background ports. If left unsecured and unmonitored, anyone on the internet can scan and exploit running databases or administration consoles.',
+          illustration: '[ Secured Node ] ─── Port 22  (SSH) ───> [ OPEN ]\n                     ─── Port 80  (HTTP) ──> [ OPEN ]\n                     ─── Port 5432(DB) ───> [ EXPOSED! ]',
+          analogyTitle: 'The Locked Building Gates',
+          analogyText: 'A server is like an office building. The front lobby doors are for visitors (Port 80/443). The back dock is for cargo deliveries (Port 22 SSH). The vault inside is for records (Port 5432 Database). If you leave the vault doors wide open to the public street, thieves will enter. A firewall acts as a security guard who only lets authorized people enter specific doors.',
+          keyPoints: [
+            'UFW (Uncomplicated Firewall) is a user-friendly frontend command interface for managing iptables.',
+            'The default policy of a secure firewall should be to DENY all incoming traffic and only ALLOW explicit ports.',
+            'Hardening SSH access (changing default port 22) reduces automated bot login attempts.'
+          ]
+        },
+        {
+          title: 'UFW Syntax & Rules',
+          concept: 'Managing firewall ports requires explicit rules to enable web traffic while blocking unauthorized services.',
+          illustration: '$ sudo ufw status verbose\n$ sudo ufw default deny incoming\n$ sudo ufw allow 80/tcp\n$ sudo ufw allow 443/tcp\n$ sudo ufw enable',
+          analogyTitle: 'The Guard\'s Guest List',
+          analogyText: 'Before opening the building, the security guard gets a list of rules: \'Default: turn away everyone unless they are on the guest list (default deny).\' \'Allow anyone visiting the restaurant on Floor 80 (allow 80/tcp).\' \'Only allow maintenance crew to Enter Door 22 (allow 22/tcp).\'',
+          keyPoints: [
+            'Always ensure Port 22 (SSH) is allowed BEFORE enabling UFW, or you will lock yourself out of the server!',
+            'TCP rules verify handshake connections, while UDP rules are for stateless datagram communication.',
+            'UFW logs drop attempts to help administrators audit unauthorized port scans.'
+          ]
+        },
+        {
+          title: 'Defense in Depth',
+          concept: 'Security is layered. Firewalls must be combined with key authentication, disabled root logins, and fail2ban filters.',
+          illustration: 'Internet ──> [ UFW Firewall ] ──> [ SSH Key Auth ] ──> [ Non-Root User ]',
+          analogyTitle: 'The Multi-Layered Vault',
+          analogyText: 'Getting past the building guard (Firewall) is just step one. To get into the safe room, you need a unique physical key card rather than a simple passcode (SSH Key Authentication). Once inside, you still aren\'t allowed to sign corporate checks unless you are the authorized accountant (non-root permissions).',
+          keyPoints: [
+            'Disable root password logins in /etc/ssh/sshd_config to stop brute force attempts.',
+            'Fail2ban automatically blocks IP addresses that show multiple failed login attempts in system logs.',
+            'Keep packages updated via apt upgrade to resolve underlying security vulnerabilities.'
+          ]
+        }
+      ],
+      glossary: [
+        { term: 'Firewall', definition: 'A security system that monitors and controls incoming and outgoing network traffic based on rules.' },
+        { term: 'UFW', definition: 'Uncomplicated Firewall: a user-friendly command-line tool for managing firewall rules on Ubuntu/Debian.' },
+        { term: 'Port Scanning', definition: 'A technique used by administrators (and attackers) to discover open ports and services on a host.' },
+        { term: 'Brute Force Attack', definition: 'A trial-and-error method used by bots to guess passwords or keys by repeatedly trying thousands of combinations.' },
+        { term: 'SSH Key Auth', definition: 'An authentication method using cryptographic key pairs (private/public) instead of passwords.' }
+      ],
+      quiz: [
+        {
+          question: 'What critical rule must you configure before activating UFW on a remote unmanaged VPS?',
+          options: [
+            'Allow port 5432 (Database)',
+            'Allow port 22 (SSH)',
+            'Deny port 80 (HTTP)'
+          ],
+          correctIndex: 1,
+          explanation: 'If you enable UFW without allowing port 22 first, your current and future SSH sessions will be blocked, locking you out of the server.'
+        },
+        {
+          question: 'What command displays the active rules and status of the Uncomplicated Firewall?',
+          options: [
+            'ufw show rules',
+            'sudo ufw status',
+            'systemctl show ufw'
+          ],
+          correctIndex: 1,
+          explanation: 'Executing \'sudo ufw status\' returns the current state of UFW (active/inactive) and a list of all configured port allowance rules.'
+        },
+        {
+          question: 'Which default incoming policy is recommended for standard secure production nodes?',
+          options: [
+            'Default Deny Incoming',
+            'Default Allow Incoming',
+            'Default Reject Outgoing'
+          ],
+          correctIndex: 0,
+          explanation: 'A secure baseline firewall policy should block all incoming traffic by default, only allowing explicitly defined ports (like 80/443 for web).'
+        }
+      ],
+      unlockedLabId: 'lab_8'
+    },
+    {
+      id: 'course_7',
+      title: 'Advanced Nginx Server Blocks & Caching',
+      category: 'VPS Management',
+      difficulty: 'Advanced',
+      creditsReward: 80,
+      badgeColor: 'border-rose-500/20 bg-rose-500/10 text-rose-400',
+      description: 'Master advanced Nginx hosting. Learn to host multiple domains on a single server using Server Blocks, configure proxy headers, set up static caching, and perform load balancing.',
+      slides: [
+        {
+          title: 'Virtual Hosting & Server Blocks',
+          concept: 'Nginx uses Server Blocks (similar to Virtual Hosts in Apache) to serve completely different websites depending on the hostname header requested by the browser.',
+          illustration: 'Request: siteA.local ──> [ Nginx Server ] ──> Serve /var/www/siteA/\nRequest: siteB.local ──> [ Port 80/443  ] ──> Serve /var/www/siteB/',
+          analogyTitle: 'The Shared Office Receptionist',
+          analogyText: 'Imagine two different companies sharing the same lobby and receptionist. When a visitor enters and asks for \'Alpha Corp\', the receptionist directs them to Office A. If they ask for \'Beta LLC\', they go to Office B. The receptionist is Nginx, and the request domain directs visitors to their respective folders.',
+          keyPoints: [
+            'Server blocks are defined in configuration files inside /etc/nginx/sites-available/.',
+            'The server_name directive specifies which domains Nginx should catch.',
+            'Symlinking configurations to /etc/nginx/sites-enabled/ activates them.'
+          ]
+        },
+        {
+          title: 'Reverse Proxy Headers',
+          concept: 'When Nginx acts as a reverse proxy, it forwards requests to backend services (like Node.js). To preserve client details, you must explicitly set proxy headers.',
+          illustration: 'Client ──> Nginx (Proxy) ──> Header: Host, X-Real-IP ──> Node App (Port 5000)',
+          analogyTitle: 'The Booking Agent',
+          analogyText: 'If you hire a travel agent to book a hotel room, the hotel needs to know *your* name and passport (X-Real-IP, Host), not the travel agent\'s details. If the agent doesn\'t pass your information, the hotel logs the booking under the agent\'s name (localhost IP).',
+          keyPoints: [
+            'proxy_set_header Host $host preserves the original HTTP host header.',
+            'proxy_set_header X-Real-IP $remote_addr passes the visitor\'s real IP address.',
+            'Without these headers, background services see all traffic as originating from localhost (127.0.0.1).'
+          ]
+        },
+        {
+          title: 'Nginx Load Balancing',
+          concept: 'Nginx can distribute traffic across multiple backend servers using upstream pools, improving reliability and capacity.',
+          illustration: 'Inbound Traffic ──> [ Nginx Load Balancer ]\n                          ├── App Node 1 (192.168.1.100)\n                          └── App Node 2 (192.168.1.101)',
+          analogyTitle: 'The Supermarket Queue Director',
+          analogyText: 'In a busy grocery store, a queue director stands at the front of a single queue and routes shoppers to open cash registers. If register 1 is busy, the shopper goes to register 2. If register 2 breaks, they only use register 1. This prevents any single register from being overwhelmed.',
+          keyPoints: [
+            'Upstream pools define pools of backend servers.',
+            'Default balancing is Round Robin; options include least_conn and ip_hash.',
+            'Active health checks bypass failed server nodes automatically.'
+          ]
+        }
+      ],
+      glossary: [
+        { term: 'Server Block', definition: 'An Nginx configuration directive defining site rules for specific hostnames on a single server.' },
+        { term: 'Reverse Proxy', definition: 'A server that takes client requests and forwards them to one or more backend servers.' },
+        { term: 'Load Balancing', definition: 'The practice of distributing network traffic across a pool of servers to optimize resource utilization.' },
+        { term: 'Upstream Pool', definition: 'A group of backend application servers defined in Nginx configuration to receive proxied traffic.' },
+        { term: 'Symlink', definition: 'A symbolic link pointing to another file, used in Nginx to enable configuration profiles.' }
+      ],
+      quiz: [
+        {
+          question: 'Which Nginx directive tells the server which domain name to match for a server block?',
+          options: [
+            'listen',
+            'server_name',
+            'root'
+          ],
+          correctIndex: 1,
+          explanation: 'The \'server_name\' directive matches the domain name in the incoming HTTP Host header to route the request to the correct block.'
+        },
+        {
+          question: 'Why must you symlink a file from sites-available to sites-enabled in Nginx?',
+          options: [
+            'To back up the configuration code',
+            'To activate the site configuration block',
+            'To compile the config file into binary'
+          ],
+          correctIndex: 1,
+          explanation: 'Nginx\'s master config file only imports files from \'sites-enabled\'. Symlinking there tells Nginx to load and activate the configuration.'
+        },
+        {
+          question: 'Which header preserves the client\'s original IP address when proxying requests through Nginx?',
+          options: [
+            'X-Real-IP',
+            'Host',
+            'User-Agent'
+          ],
+          correctIndex: 0,
+          explanation: 'The \'X-Real-IP\' header forwards the remote client IP to the backend app, preventing Nginx\'s host IP (127.0.0.1) from overwriting it.'
+        }
+      ],
+      unlockedLabId: 'lab_9'
     }
   ];
 
@@ -730,6 +995,87 @@ export const LabsTab: React.FC<LabsTabProps> = ({ setActiveTab, setActiveProvide
         'Once active, click the "Launch Console" button next to your "docker-app" droplet to connect to its root terminal session.',
         'In the terminal console, type: "docker run nginx" and press Enter. This downloads the official Nginx container image and starts it on port 80.'
       ]
+    },
+    {
+      id: 'lab_7',
+      title: 'DNS Mail Routing & Aliasing',
+      difficulty: 'Intermediate',
+      category: 'Shared Hosting',
+      providerName: 'cPanel Classic',
+      providerId: 'cpanel',
+      creditsReward: 60,
+      description: 'Configure complex DNS records to map secondary web services. Setup a canonical CNAME alias for your static files, configure primary and secondary mail exchanger servers (MX records), and verify their resolution using dig.',
+      learningOutcomes: [
+        'Mapping canonical aliases with CNAME records',
+        'Configuring prioritized email delivery using multiple MX records',
+        'Using dig to inspect and query active mail servers'
+      ],
+      objectives: [
+        { id: 'cname_created', text: 'Create CNAME record pointing "cdn.hostlab.local" to "hostlab.local"', isCompleted: false },
+        { id: 'mx_primary_ready', text: 'Create MX record pointing "hostlab.local" to "mail.hostlab.local" with priority 10', isCompleted: false },
+        { id: 'mx_backup_ready', text: 'Create MX record pointing "hostlab.local" to "backup-mail.hostlab.local" with priority 20', isCompleted: false }
+      ],
+      hints: [
+        'Open cPanel Classic from the Provider Clones tab.',
+        'Go to the DNS Zone Editor section.',
+        'To add the CNAME: set Name to \'cdn.hostlab.local\', Type to \'CNAME\', and Value to \'hostlab.local\'. Click Add.',
+        'To add the MX records: set Name to \'hostlab.local\', Type to \'MX\', and Value to \'10 mail.hostlab.local\'. Repeat for backup-mail.hostlab.local with priority \'20 backup-mail.hostlab.local\'.'
+      ]
+    },
+    {
+      id: 'lab_8',
+      title: 'VPS Firewall Hardening (UFW)',
+      difficulty: 'Intermediate',
+      category: 'VPS Management',
+      providerName: 'Contabo VPS',
+      providerId: 'contabo',
+      creditsReward: 80,
+      description: 'Establish active firewall policies to protect your virtual private server. Use the terminal console to allow SSH administration access, allow standard Nginx web traffic, block internal database sockets from external requests, and enable the UFW service.',
+      learningOutcomes: [
+        'Managing firewall rules via the UFW command-line tool',
+        'Securing background database ports from external scans',
+        'Activating and verifying security rules on Ubuntu kernels'
+      ],
+      objectives: [
+        { id: 'ufw_ssh_allowed', text: 'Allow port 22 (SSH) in UFW rules', isCompleted: false },
+        { id: 'ufw_http_allowed', text: 'Allow port 80 (HTTP) in UFW rules', isCompleted: false },
+        { id: 'ufw_postgres_blocked', text: 'Ensure port 5432 (Postgres) is denied or not explicitly allowed', isCompleted: false },
+        { id: 'ufw_enabled_active', text: 'Enable UFW so its status is active', isCompleted: false }
+      ],
+      hints: [
+        'Open the Contabo VPS tab and launch the server terminal console.',
+        'Verify UFW commands: run \'ufw allow 22\' to allow SSH connections.',
+        'Allow HTTP web traffic: run \'ufw allow 80\'.',
+        'To deny or block PostgreSQL port: run \'ufw deny 5432\'.',
+        'Activate the firewall rules by running \'ufw enable\' and type \'y\' to confirm.'
+      ]
+    },
+    {
+      id: 'lab_9',
+      title: 'Nginx Virtual Hosting & Proxy Headers',
+      difficulty: 'Advanced',
+      category: 'VPS Management',
+      providerName: 'DigitalOcean',
+      providerId: 'digitalocean',
+      creditsReward: 100,
+      description: 'Configure a secondary Nginx Server Block on your VPS to host multiple sites. Edit the configuration defaults, map proxy headers for a backend API, establish site symlinks, and reload the Nginx daemon without syntax warnings.',
+      learningOutcomes: [
+        'Creating isolated Nginx server blocks for multiple domains',
+        'Configuring reverse proxy parameters and client headers',
+        'Activating configurations using Linux symlink commands'
+      ],
+      objectives: [
+        { id: 'nginx_multi_site', text: 'Configure a server block for "dashboard.hostlab.local" in Nginx', isCompleted: false },
+        { id: 'nginx_proxy_headers', text: 'Set "X-Real-IP" header in proxy configuration', isCompleted: false },
+        { id: 'nginx_active_symlink', text: 'Link the configuration from sites-available to sites-enabled', isCompleted: false },
+        { id: 'nginx_service_reloaded', text: 'Verify Nginx service is running and config syntax is valid', isCompleted: false }
+      ],
+      hints: [
+        'Open the Droplet console terminal.',
+        'Create a new file \'/etc/nginx/sites-available/dashboard\' containing a server block that listens on port 80, sets server_name to \'dashboard.hostlab.local\', and has a location block proxying to http://localhost:5000 with \'proxy_set_header X-Real-IP $remote_addr;\'.',
+        'Link it to sites-enabled: run \'ln -s /etc/nginx/sites-available/dashboard /etc/nginx/sites-enabled/dashboard\'.',
+        'Reload Nginx using \'systemctl restart nginx\' to apply the configurations.'
+      ]
     }
   ];
 
@@ -849,6 +1195,59 @@ export const LabsTab: React.FC<LabsTabProps> = ({ setActiveTab, setActiveProvide
         results['docker_nginx_launched'] = hasDockerNginxRun;
 
         allPassed = hasDockerAppDroplet && hasDockerNginxRun;
+      }
+      else if (labId === 'lab_7') {
+        const hasCname = state.dnsRecords.some(r => 
+          r.name === 'cdn.hostlab.local' && r.type === 'CNAME' && r.value === 'hostlab.local'
+        );
+        results['cname_created'] = hasCname;
+
+        const hasMx10 = state.dnsRecords.some(r => 
+          r.name === 'hostlab.local' && r.type === 'MX' && r.value.includes('mail.hostlab.local') && r.value.includes('10')
+        );
+        results['mx_primary_ready'] = hasMx10;
+
+        const hasMx20 = state.dnsRecords.some(r => 
+          r.name === 'hostlab.local' && r.type === 'MX' && r.value.includes('backup-mail.hostlab.local') && r.value.includes('20')
+        );
+        results['mx_backup_ready'] = hasMx20;
+
+        allPassed = hasCname && hasMx10 && hasMx20;
+      }
+      else if (labId === 'lab_8') {
+        const ufwRulesRaw = localStorage.getItem('hostlab_ufw_rules');
+        const ufwRules = ufwRulesRaw ? JSON.parse(ufwRulesRaw) : { enabled: false, rules: [] };
+        
+        const hasSshAllowed = ufwRules.rules.some((r: any) => r.port === '22' && r.action === 'allow');
+        const hasHttpAllowed = ufwRules.rules.some((r: any) => r.port === '80' && r.action === 'allow');
+        const isDbBlocked = !ufwRules.rules.some((r: any) => r.port === '5432' && r.action === 'allow');
+        const isUfwActive = ufwRules.enabled;
+
+        results['ufw_ssh_allowed'] = hasSshAllowed;
+        results['ufw_http_allowed'] = hasHttpAllowed;
+        results['ufw_postgres_blocked'] = isDbBlocked;
+        results['ufw_enabled_active'] = isUfwActive;
+
+        allPassed = hasSshAllowed && hasHttpAllowed && isDbBlocked && isUfwActive;
+      }
+      else if (labId === 'lab_9') {
+        const dashboardConfig = getNodeByPath(state.fs, '/etc/nginx/sites-available/dashboard');
+        const hasDashboardConfig = dashboardConfig !== null && dashboardConfig.type === 'file';
+        results['nginx_multi_site'] = hasDashboardConfig;
+
+        const hasProxyHeaders = hasDashboardConfig && 
+          dashboardConfig.content.includes('X-Real-IP') && 
+          dashboardConfig.content.includes('dashboard.hostlab.local');
+        results['nginx_proxy_headers'] = hasProxyHeaders;
+
+        const dashboardSymlink = getNodeByPath(state.fs, '/etc/nginx/sites-enabled/dashboard');
+        const hasSymlink = dashboardSymlink !== null && dashboardSymlink.type === 'file';
+        results['nginx_active_symlink'] = hasSymlink;
+
+        const hasNginxOnline = state.services.nginx === 'running';
+        results['nginx_service_reloaded'] = hasNginxOnline && hasSymlink && hasDashboardConfig;
+
+        allPassed = hasDashboardConfig && hasProxyHeaders && hasSymlink && hasNginxOnline;
       }
 
       const updatedStatuses = { ...labStatuses };
@@ -981,7 +1380,7 @@ export const LabsTab: React.FC<LabsTabProps> = ({ setActiveTab, setActiveProvide
     <div className="flex flex-col gap-5 h-full min-h-0 select-none" id="labs-root-view">
       
       {/* SECTION 1: CORE HEADING WITH PROGRESS OVERVIEW */}
-      <div className="bg-[#0c0d12] border border-white/5 rounded-2xl p-5 shadow-xl flex flex-col md:flex-row md:items-center md:justify-between gap-5 select-none">
+      <div className="bg-[#0c0d12] border border-white/5 rounded-2xl p-6 shadow-xl flex flex-col md:flex-row md:items-center md:justify-between gap-6 select-none">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-500 to-amber-600 flex items-center justify-center text-black font-black shadow-lg shadow-yellow-500/10">
             <GraduationCap className="w-6 h-6 stroke-[2]" />
@@ -1003,7 +1402,7 @@ export const LabsTab: React.FC<LabsTabProps> = ({ setActiveTab, setActiveProvide
         <div className="flex items-center bg-[#050507] p-1.5 rounded-xl border border-white/5 shrink-0 self-start md:self-auto shadow-inner">
           <button
             onClick={() => setViewMode('academy')}
-            className={`px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2 ${
+            className={`px-4.5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2 ${
               viewMode === 'academy'
                 ? 'bg-yellow-500 text-black shadow-md shadow-yellow-500/10'
                 : 'text-slate-400 hover:text-slate-100'
@@ -1014,7 +1413,7 @@ export const LabsTab: React.FC<LabsTabProps> = ({ setActiveTab, setActiveProvide
           
           <button
             onClick={() => setViewMode('labs')}
-            className={`px-4 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2 ${
+            className={`px-4.5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2 ${
               viewMode === 'labs'
                 ? 'bg-yellow-500 text-black shadow-md shadow-yellow-500/10'
                 : 'text-slate-400 hover:text-slate-100'
@@ -1045,143 +1444,184 @@ export const LabsTab: React.FC<LabsTabProps> = ({ setActiveTab, setActiveProvide
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 flex-1 min-h-0" id="academy-view-container">
           
           {/* COURSE SYLLABUS LISTING SIDEBAR */}
-          <div className="lg:col-span-4 flex flex-col bg-[#0c0d12] border border-white/5 rounded-xl overflow-hidden h-full shadow-2xl">
-            <div className="p-4 border-b border-white/5 bg-[#08080c]/60">
+          <div className="lg:col-span-4 flex flex-col min-w-0 bg-[#0c0d12] border border-white/5 rounded-2xl overflow-hidden h-full shadow-2xl">
+            <div className="p-5 border-b border-white/5 bg-[#08080c]/60">
               <h2 className="font-bold text-white font-display text-xs uppercase tracking-wider">Theory Course Syllabus</h2>
               <p className="text-[10px] text-slate-500 mt-0.5">Learn fundamental hosting blueprints</p>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-3 space-y-3">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {coursesList.map((course) => {
-                const isActive = course.id === activeCourseId;
+                const isSelectedCourse = course.id === activeCourseId;
+                const isExpanded = expandedCourses[course.id] || false;
                 const isPassed = completedQuizzes[course.id] || false;
+                
                 return (
-                  <button
-                    key={course.id}
-                    onClick={() => {
-                      setActiveCourseId(course.id);
-                      setActiveSlideIndex(0);
-                      setActiveCourseSubTab('lessons');
-                      resetQuiz();
-                    }}
-                    className={`w-full text-left p-4 rounded-xl border transition-all cursor-pointer ${
-                      isActive
-                        ? 'bg-yellow-500/[0.04] border-yellow-500/30 text-yellow-300 shadow-lg shadow-yellow-500/[0.02]'
-                        : 'bg-[#050507]/40 border-white/5 hover:bg-white/[0.02] hover:border-white/10'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-2 mb-2">
-                      <span className="text-[9px] font-mono font-black text-slate-500 uppercase tracking-widest">
-                        {course.category}
-                      </span>
-                      <span className={`text-[9px] uppercase tracking-wider font-mono px-2 py-0.5 rounded border ${course.badgeColor}`}>
-                        {course.difficulty}
-                      </span>
-                    </div>
-
-                    <h3 className={`font-extrabold text-sm mb-1.5 ${isActive ? 'text-white' : 'text-slate-200'}`}>
-                      {course.title}
-                    </h3>
-
-                    <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed mb-3">
-                      {course.description}
-                    </p>
-
-                    <div className="flex items-center justify-between pt-2.5 border-t border-white/5 font-mono">
-                      <span className="text-[10px] text-slate-500">
-                        {course.slides.length} Lessons
-                      </span>
-
-                      {isPassed ? (
-                        <span className="text-[10px] text-emerald-400 font-bold flex items-center gap-1">
-                          <ShieldCheck className="w-3.5 h-3.5" /> Certified
+                  <div key={course.id} className="space-y-1.5">
+                    {/* Course header button */}
+                    <button
+                      onClick={() => {
+                        setActiveCourseId(course.id);
+                        setExpandedCourses(prev => ({ ...prev, [course.id]: !prev[course.id] }));
+                      }}
+                      className={`w-full text-left p-5 rounded-xl border transition-all duration-300 cursor-pointer flex flex-col justify-between ${
+                        isSelectedCourse
+                          ? 'bg-gradient-to-r from-yellow-500/[0.05] to-transparent border-yellow-500/30 border-l-4 border-l-yellow-500 text-yellow-300 shadow-md'
+                          : 'bg-[#050507]/40 border-white/5 hover:bg-white/[0.02] hover:border-white/10'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-2 mb-2 w-full">
+                        <span className="text-[8px] font-mono font-black text-slate-500 uppercase tracking-widest truncate">
+                          {course.category}
                         </span>
-                      ) : (
-                        <span className="text-[10px] text-yellow-500 font-bold flex items-center gap-1">
-                          <Trophy className="w-3.5 h-3.5" /> +{course.creditsReward} Creds
+                        <span className={`text-[8px] uppercase tracking-wider font-mono px-2 py-0.5 rounded border ${course.badgeColor}`}>
+                          {course.difficulty}
                         </span>
-                      )}
-                    </div>
-                  </button>
+                      </div>
+                      
+                      <h3 className={`font-extrabold text-sm mb-1.5 ${isSelectedCourse ? 'text-white' : 'text-slate-300'}`}>
+                        {course.title}
+                      </h3>
+                      
+                      <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed mb-3">
+                        {course.description}
+                      </p>
+
+                      <div className="flex items-center justify-between pt-2.5 border-t border-white/5 font-mono w-full">
+                        <span className="text-[10px] text-slate-500">
+                          {course.slides.length} Lessons
+                        </span>
+
+                        {isPassed ? (
+                          <span className="text-[10px] text-emerald-400 font-bold flex items-center gap-1">
+                            <ShieldCheck className="w-3.5 h-3.5" /> Certified
+                          </span>
+                        ) : (
+                          <span className="text-[10px] text-yellow-500 font-bold flex items-center gap-1">
+                            <Trophy className="w-3.5 h-3.5" /> +{course.creditsReward} Creds
+                          </span>
+                        )}
+                      </div>
+                    </button>
+
+                    {/* Nested items under the expanded course */}
+                    {isExpanded && (
+                      <div className="pl-3.5 border-l border-white/10 ml-4 mt-2 mb-4 space-y-1.5 animate-in fade-in duration-300">
+                        {course.slides.map((slide, sIdx) => {
+                          const isCurrentSlide = isSelectedCourse && activeCourseSubTab === 'lessons' && activeSlideIndex === sIdx;
+                          return (
+                            <button
+                              key={sIdx}
+                              onClick={() => {
+                                setActiveCourseId(course.id);
+                                setActiveCourseSubTab('lessons');
+                                setActiveSlideIndex(sIdx);
+                              }}
+                              className={`w-full text-left py-2 px-3 rounded-lg text-xs transition-all flex items-center gap-2.5 cursor-pointer ${
+                                isCurrentSlide
+                                  ? 'bg-yellow-500/10 text-yellow-400 font-semibold'
+                                  : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.02]'
+                              }`}
+                            >
+                              <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${isCurrentSlide ? 'bg-yellow-500' : 'bg-slate-600'}`} />
+                              <span className="truncate">{slide.title}</span>
+                            </button>
+                          );
+                        })}
+
+                        {/* Glossary link */}
+                        <button
+                          onClick={() => {
+                            setActiveCourseId(course.id);
+                            setActiveCourseSubTab('glossary');
+                          }}
+                          className={`w-full text-left py-2 px-3 rounded-lg text-xs transition-all flex items-center gap-2.5 cursor-pointer ${
+                            isSelectedCourse && activeCourseSubTab === 'glossary'
+                              ? 'bg-yellow-500/10 text-yellow-400 font-semibold'
+                              : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.02]'
+                          }`}
+                        >
+                          <Book className={`w-3.5 h-3.5 shrink-0 ${isSelectedCourse && activeCourseSubTab === 'glossary' ? 'text-yellow-500' : 'text-slate-500'}`} />
+                          <span>Glossary & Terms</span>
+                        </button>
+
+                        {/* Quiz link */}
+                        <button
+                          onClick={() => {
+                            setActiveCourseId(course.id);
+                            setActiveCourseSubTab('quiz');
+                            resetQuiz();
+                          }}
+                          className={`w-full text-left py-2 px-3 rounded-lg text-xs transition-all flex items-center gap-2.5 cursor-pointer relative ${
+                            isSelectedCourse && activeCourseSubTab === 'quiz'
+                              ? 'bg-yellow-500/10 text-yellow-400 font-semibold'
+                              : 'text-slate-400 hover:text-slate-200 hover:bg-white/[0.02]'
+                          }`}
+                        >
+                          <Trophy className={`w-3.5 h-3.5 shrink-0 ${isSelectedCourse && activeCourseSubTab === 'quiz' ? 'text-yellow-500' : 'text-slate-500'}`} />
+                          <span>Review Quiz</span>
+                          {isPassed && (
+                            <span className="absolute right-3 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                          )}
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 );
               })}
             </div>
           </div>
 
           {/* ACTIVE COURSE VIEWER AND LESSON DESK */}
-          <div className="lg:col-span-8 flex flex-col bg-[#0c0d12] border border-white/5 rounded-xl overflow-hidden h-full shadow-2xl relative">
+          <div className="lg:col-span-8 flex flex-col min-w-0 bg-[#0c0d12] border border-white/5 rounded-2xl overflow-hidden h-full shadow-2xl relative">
             
-            {/* SUB-TAB NAVIGATOR (LESSONS / GLOSSARY / QUIZ) */}
-            <div className="p-4 bg-[#08080c]/60 border-b border-white/5 flex flex-wrap items-center justify-between gap-3">
+            {/* WORKSPACE HEADER BAR (CLEAN TITLE) */}
+            <div className="p-5 bg-[#08080c]/60 border-b border-white/5 flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <Book className="w-5 h-5 text-yellow-400 animate-pulse" />
                 <div>
-                  <span className="text-[9px] text-slate-500 font-mono font-bold uppercase tracking-wider block">Currently Studying</span>
-                  <h2 className="font-extrabold text-white text-sm uppercase tracking-tight">{activeCourse.title}</h2>
+                  <span className="text-[9px] text-slate-500 font-mono font-bold uppercase tracking-wider block">
+                    {activeCourseSubTab === 'lessons' ? `Lesson ${activeSlideIndex + 1} of ${activeCourse.slides.length}` : activeCourseSubTab === 'glossary' ? 'Course Dictionary' : 'Final Certification'}
+                  </span>
+                  <h2 className="font-extrabold text-white text-sm uppercase tracking-tight">
+                    {activeCourseSubTab === 'lessons' ? activeCourse.slides[activeSlideIndex].title : activeCourseSubTab === 'glossary' ? 'Technical Glossary Terms' : `${activeCourse.title} - Final Quiz`}
+                  </h2>
                 </div>
               </div>
 
-              <div className="flex items-center bg-[#050507] p-1 rounded-lg border border-white/5 shadow-inner">
-                <button
-                  onClick={() => setActiveCourseSubTab('lessons')}
-                  className={`px-3 py-1.5 rounded text-xs font-bold tracking-wide cursor-pointer transition-all ${
-                    activeCourseSubTab === 'lessons'
-                      ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
-                      : 'text-slate-400 border border-transparent hover:text-slate-200'
-                  }`}
-                >
-                  Lessons
-                </button>
-                <button
-                  onClick={() => setActiveCourseSubTab('glossary')}
-                  className={`px-3 py-1.5 rounded text-xs font-bold tracking-wide cursor-pointer transition-all ${
-                    activeCourseSubTab === 'glossary'
-                      ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
-                      : 'text-slate-400 border border-transparent hover:text-slate-200'
-                  }`}
-                >
-                  Glossary
-                </button>
-                <button
-                  onClick={() => setActiveCourseSubTab('quiz')}
-                  className={`px-3 py-1.5 rounded text-xs font-bold tracking-wide cursor-pointer transition-all relative ${
-                    activeCourseSubTab === 'quiz'
-                      ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
-                      : 'text-slate-400 border border-transparent hover:text-slate-200'
-                  }`}
-                >
-                  Review Quiz
-                  {isCourseGraduated && (
-                    <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-500 border border-[#0d0d12]"></span>
-                  )}
-                </button>
+              <div className="text-right">
+                <span className="text-[9px] text-slate-500 font-mono block font-bold uppercase tracking-wider">Module</span>
+                <span className="text-xs font-bold text-yellow-400 font-mono">{activeCourse.title}</span>
               </div>
             </div>
 
             {/* MAIN CONTENT DISPLAY AREA */}
-            <div className="flex-1 p-5 overflow-y-auto space-y-5">
+            <div className="flex-1 p-6 md:p-8 overflow-y-auto space-y-6">
               
               {/* SUB-TAB: ACTIVE LESSON SLIDER */}
               {activeCourseSubTab === 'lessons' && (
-                <div className="space-y-5">
-                  
-                  {/* LESSON STEP INDICATOR */}
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-slate-400 font-bold uppercase tracking-wider font-sans">
-                      Lesson {activeSlideIndex + 1} of {activeCourse.slides.length}: {activeCourse.slides[activeSlideIndex].title}
-                    </span>
-                    <span className="text-[11px] font-mono text-slate-500">
-                      Step {activeSlideIndex + 1} / {activeCourse.slides.length}
-                    </span>
-                  </div>
+                <div className="space-y-6">
 
-                  {/* HIGH-CONTRAST VISUAL TEXT-BASED ILLUSTRATION CONTAINER */}
-                  <div className="bg-[#050507] border border-white/5 rounded-xl p-4 font-mono text-xs text-slate-300 overflow-x-auto whitespace-pre leading-relaxed select-text shadow-inner">
-                    {activeCourse.slides[activeSlideIndex].illustration}
+                  {/* PREMIUM TERMINAL MOCKUP WINDOW */}
+                  <div className="bg-[#030305] border border-white/5 rounded-xl shadow-lg overflow-hidden flex flex-col">
+                    <div className="bg-[#07070a] px-4 py-2.5 border-b border-white/5 flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 select-none">
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#ef4444]/80 block"></span>
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#f59e0b]/80 block"></span>
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#10b981]/80 block"></span>
+                      </div>
+                      <span className="text-[10px] font-mono text-slate-500 tracking-wide select-none flex items-center gap-1">
+                        <FileText className="w-3 h-3" /> architecture_blueprint.txt
+                      </span>
+                      <div className="w-8"></div>
+                    </div>
+                    <div className="p-5 font-mono text-[11px] md:text-xs text-cyan-400 overflow-x-auto whitespace-pre leading-relaxed select-text bg-[#030305] max-h-[320px]">
+                      {activeCourse.slides[activeSlideIndex].illustration}
+                    </div>
                   </div>
 
                   {/* INTUITIVE EXPLANATION CONTAINER */}
-                  <div className="bg-[#101116] border border-white/5 rounded-xl p-4.5 space-y-3.5 shadow-md">
+                  <div className="bg-[#101116] border border-white/5 rounded-xl p-5 md:p-6 space-y-4 shadow-md">
                     <h3 className="text-xs font-black text-yellow-400 uppercase tracking-widest font-mono flex items-center gap-1.5">
                       <Lightbulb className="w-4.5 h-4.5" /> Concept Breakdown
                     </h3>
@@ -1190,22 +1630,22 @@ export const LabsTab: React.FC<LabsTabProps> = ({ setActiveTab, setActiveProvide
                       {activeCourse.slides[activeSlideIndex].concept}
                     </p>
 
-                    <div className="p-3.5 bg-white/[0.01] border-l-2 border-yellow-500 rounded-r-lg space-y-1">
-                      <strong className="text-xs text-slate-200 block font-display tracking-wide font-bold">
-                        {activeCourse.slides[activeSlideIndex].analogyTitle}
+                    <div className="p-4 bg-yellow-500/[0.02] border-l-4 border-yellow-500 rounded-r-xl space-y-1.5">
+                      <strong className="text-xs text-yellow-400 block font-display tracking-wide font-extrabold flex items-center gap-1">
+                        <Compass className="w-3.5 h-3.5" /> Real-World Analogy
                       </strong>
-                      <p className="text-xs text-slate-400 leading-relaxed font-sans">
+                      <p className="text-xs text-slate-350 leading-relaxed font-sans">
                         {activeCourse.slides[activeSlideIndex].analogyText}
                       </p>
                     </div>
                   </div>
 
                   {/* KEY LEARNING BULLETS */}
-                  <div className="space-y-2.5">
+                  <div className="space-y-3">
                     <h4 className="text-[10px] font-mono font-black text-slate-500 uppercase tracking-wider">Critical Takeaways</h4>
-                    <div className="space-y-2">
+                    <div className="space-y-2.5">
                       {activeCourse.slides[activeSlideIndex].keyPoints.map((point, idx) => (
-                        <div key={idx} className="bg-white/[0.01] border border-white/5 p-3 rounded-lg flex items-start gap-2.5">
+                        <div key={idx} className="bg-white/[0.01] border border-white/5 p-4 rounded-xl flex items-start gap-3">
                           <div className="w-4.5 h-4.5 rounded-full bg-yellow-500/15 text-yellow-400 flex items-center justify-center shrink-0 font-mono text-[10px] font-black mt-0.5">
                             ✔
                           </div>
@@ -1472,15 +1912,15 @@ export const LabsTab: React.FC<LabsTabProps> = ({ setActiveTab, setActiveProvide
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 min-h-0" id="labs-view-container">
           
           {/* LEFT PANEL: Laboratories List Selector */}
-          <div className="lg:col-span-4 flex flex-col bg-[#0d0d12] border border-white/5 rounded-xl overflow-hidden h-full shadow-2xl">
-            <div className="p-4 border-b border-white/5 bg-[#0a0a0c]/40 flex justify-between items-center select-none">
+          <div className="lg:col-span-4 flex flex-col min-w-0 bg-[#0d0d12] border border-white/5 rounded-2xl overflow-hidden h-full shadow-2xl">
+            <div className="p-5 border-b border-white/5 bg-[#0a0a0c]/40 flex justify-between items-center select-none">
               <div>
                 <h2 className="font-bold text-white font-display tracking-tight text-sm uppercase">PRACTICE LABS LIST</h2>
                 <p className="text-[11px] text-slate-500 mt-0.5">Hands-on infrastructure milestones</p>
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-3 space-y-2.5">
+            <div className="flex-1 overflow-y-auto p-4 space-y-3.5">
               {labsList.map((lab) => {
                 const isActive = lab.id === activeLabId;
                 const completed = labStatuses[lab.id]?.completed || false;
@@ -1491,13 +1931,13 @@ export const LabsTab: React.FC<LabsTabProps> = ({ setActiveTab, setActiveProvide
                       setActiveLabId(lab.id);
                       setExpandedHint(null);
                     }}
-                    className={`w-full text-left p-3.5 rounded-xl border transition-all duration-200 cursor-pointer ${
+                    className={`w-full text-left p-5 rounded-xl border transition-all duration-300 cursor-pointer ${
                       isActive
-                        ? 'bg-yellow-500/[0.05] border-yellow-500/35 text-yellow-300 shadow-glow-yellow/5'
-                        : 'bg-[#050507]/40 border-white/5 hover:bg-white/[0.02] hover:border-white/10'
+                        ? 'bg-gradient-to-r from-yellow-500/[0.05] to-transparent border-yellow-500/30 border-l-4 border-l-yellow-500 text-yellow-300 shadow-glow-yellow/5 translate-x-1'
+                        : 'bg-[#050507]/40 border-white/5 hover:bg-white/[0.02] hover:border-white/10 hover:translate-x-1'
                     }`}
                   >
-                    <div className="flex items-start justify-between gap-3 mb-1.5">
+                    <div className="flex items-start justify-between gap-3 mb-2">
                       <div className="flex items-center gap-1.5">
                         <BookOpen className={`w-4 h-4 ${isActive ? 'text-yellow-400' : 'text-slate-500'}`} />
                         <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider font-semibold">
@@ -1509,15 +1949,15 @@ export const LabsTab: React.FC<LabsTabProps> = ({ setActiveTab, setActiveProvide
                       </span>
                     </div>
 
-                    <h3 className={`font-semibold text-sm truncate mb-1 ${isActive ? 'text-white' : 'text-slate-200'}`}>
+                    <h3 className={`font-semibold text-sm truncate mb-1.5 ${isActive ? 'text-white' : 'text-slate-200'}`}>
                       {lab.title}
                     </h3>
 
-                    <p className="text-xs text-slate-400 line-clamp-2 mb-2.5 leading-relaxed">
+                    <p className="text-xs text-slate-400 line-clamp-2 mb-3 leading-relaxed">
                       {lab.description}
                     </p>
 
-                    <div className="flex items-center justify-between pt-2 border-t border-white/5">
+                    <div className="flex items-center justify-between pt-2.5 border-t border-white/5">
                       <span className="text-[10px] font-bold text-slate-500 font-mono uppercase tracking-wide">
                         Target: {lab.providerName}
                       </span>
@@ -1541,8 +1981,8 @@ export const LabsTab: React.FC<LabsTabProps> = ({ setActiveTab, setActiveProvide
           </div>
 
           {/* RIGHT PANEL: Interactive Active Lab Viewport */}
-          <div className="lg:col-span-8 flex flex-col bg-[#0d0d12] border border-white/5 rounded-xl overflow-hidden h-full shadow-2xl">
-            <div className="p-4 bg-[#0a0a0c]/60 border-b border-white/5 flex flex-wrap items-center justify-between gap-3 select-none">
+          <div className="lg:col-span-8 flex flex-col min-w-0 bg-[#0d0d12] border border-white/5 rounded-2xl overflow-hidden h-full shadow-2xl">
+            <div className="p-5 bg-[#0a0a0c]/60 border-b border-white/5 flex flex-wrap items-center justify-between gap-3 select-none">
               <div className="flex items-center gap-2.5">
                 <Compass className="w-5 h-5 text-yellow-400 animate-spin-slow" />
                 <div>

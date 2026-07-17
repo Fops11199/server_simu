@@ -6,6 +6,23 @@ import {
   ShieldCheck, AlertTriangle, Monitor, LogOut, ChevronRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useUIStore } from '../stores/useUIStore';
+
+const CompanionHelp: React.FC<{ text: string }> = ({ text }) => {
+  const { companionOpen } = useUIStore();
+  if (!companionOpen) return null;
+  return (
+    <span className="relative group cursor-help inline-block ml-1.5 shrink-0 select-none normal-case font-sans">
+      <span className="w-4 h-4 rounded-full bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 text-[10px] font-bold flex items-center justify-center animate-pulse">
+        ?
+      </span>
+      <span className="absolute z-[999] hidden group-hover:block w-52 p-2.5 bg-slate-950 border border-yellow-500/30 text-slate-350 text-[10px] rounded-lg shadow-2xl leading-normal bottom-full mb-2 left-1/2 -translate-x-1/2">
+        {text}
+        <span className="absolute left-1/2 -bottom-1 -translate-x-1/2 w-2 h-2 bg-slate-950 border-r border-b border-yellow-500/30 rotate-45"></span>
+      </span>
+    </span>
+  );
+};
 
 interface Droplet {
   id: string;
@@ -483,7 +500,10 @@ export const DigitalOceanTab: React.FC = () => {
                       
                       {/* Step 1: Distribution */}
                       <div className="space-y-2.5">
-                        <label className="block font-black text-slate-700 uppercase tracking-wide">1. Choose an Operating System</label>
+                        <label className="block font-black text-slate-700 uppercase tracking-wide flex items-center gap-1.5">
+                          1. Choose an Operating System
+                          <CompanionHelp text="Base template image. Installs standard command tools (like bash shell, SSH, apt package manager) on deployment." />
+                        </label>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                           {distros.map(d => {
                             const isSel = selectedImage === d.name;
@@ -506,7 +526,10 @@ export const DigitalOceanTab: React.FC = () => {
 
                       {/* Step 2: Marketplace apps */}
                       <div className="space-y-2.5">
-                        <label className="block font-black text-slate-700 uppercase tracking-wide">2. Select Software Blueprint (1-Click Apps)</label>
+                        <label className="block font-black text-slate-700 uppercase tracking-wide flex items-center gap-1.5">
+                          2. Select Software Blueprint (1-Click Apps)
+                          <CompanionHelp text="Pre-baked VM blueprints. Choosing Docker pre-installs the container runtime environment, ready for docker run commands." />
+                        </label>
                         <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
                           {apps.map(a => {
                             const isSel = selectedApp === a.name;
